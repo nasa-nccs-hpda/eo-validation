@@ -166,7 +166,7 @@ class ValidationDashboard(ipyleaflet.Map):
             self.mask_classes = ['other', 'tree', 'crop', 'burn']
         else:
             self.mask_classes = kwargs['mask_classes']
-            
+
         # Define pre-generated validations points
         if "points_dir" not in kwargs:
             self.points_dir = '/home/jovyan/efs/projects/3sl/validation/original_points'
@@ -178,7 +178,7 @@ class ValidationDashboard(ipyleaflet.Map):
             self.gen_points = True
         else:
             self.gen_points = kwargs['gen_points']
-            
+
         # Define if validation points need to be generated
         if "n_points" not in kwargs:
             self.n_points = 200
@@ -291,7 +291,7 @@ class ValidationDashboard(ipyleaflet.Map):
         unique_counts['percent'] = percentage_counts
         unique_counts['standard_deviation'] = standard_deviation
         unique_counts = unique_counts.round(2)
-        
+
         # Choose between Oloffson or static number of points
         if n_points is not None:
             val_total_points = n_points
@@ -304,7 +304,7 @@ class ValidationDashboard(ipyleaflet.Map):
         # Get the number of points per class
         unique_counts['n_point'] = \
             (unique_counts['percent'] * val_total_points).apply(np.floor)
-        
+
         if unique_counts['n_point'].sum() < val_total_points:
             unique_counts.at[0, 'n_point'] += \
                 val_total_points - unique_counts['n_point'].sum()
