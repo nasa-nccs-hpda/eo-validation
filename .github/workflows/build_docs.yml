@@ -2,9 +2,9 @@ name: Publish Docs
 
 on:
   push:
-    branches: [ master ]
-  release:
-    types: [ created ]
+    branches: [ main ]
+  #release:
+  #  types: [ created ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
