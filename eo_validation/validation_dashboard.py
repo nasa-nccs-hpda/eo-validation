@@ -169,7 +169,8 @@ class ValidationDashboard(ipyleaflet.Map):
 
         # Define pre-generated validations points
         if "points_dir" not in kwargs:
-            self.points_dir = '/home/jovyan/efs/projects/3sl/validation/original_points'
+            self.points_dir = \
+                '/home/jovyan/efs/projects/3sl/validation/original_points'
         else:
             self.points_dir = kwargs['points_dir']
 
@@ -481,7 +482,7 @@ class ValidationDashboard(ipyleaflet.Map):
 
             # Add layer to map
             self.add_layer(marker_cluster)
-        
+
         # Save GPKG file with dataframe
         self.save_gpkg(
             ipysheet.to_dataframe(self._validation_sheet),

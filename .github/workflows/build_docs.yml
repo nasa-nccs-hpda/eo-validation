@@ -34,7 +34,7 @@ jobs:
           conda create -n docs python=3.9 rasterio xarray scipy pyproj pandoc sphinx sphinx-autodoc-typehints jupyter_sphinx sphinx_rtd_theme sphinx-click nbsphinx
           source activate docs
           python -m pip install -e .[doc]
-          sphinx-build -b html docs/ docs/build/
+          sphinx-build -b html docs/ docs/_build/
           #cd docs/
           #make html
 
@@ -44,7 +44,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
-          folder: docs/build/
+          folder: docs/_build/
           #folder: docs/_build/html
           clean: false
           target-folder: ${{ github.ref }}
@@ -55,7 +55,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
-          folder: docs/build/
+          folder: docs/_build/
           #folder: docs/_build/html
           clean: false
           target-folder: latest

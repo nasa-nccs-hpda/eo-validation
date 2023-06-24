@@ -7,8 +7,8 @@ import sys
 import importlib.metadata
 
 sys.path.insert(0, os.path.abspath('..'))
-#package_path = os.path.abspath('..')
-#os.environ['PYTHONPATH'] = ':'.join((package_path, os.environ.get('PYTHONPATH', '')))
+# package_path = os.path.abspath('..')
+# os.environ['PYTHONPATH'] = ':'.join((package_path, os.environ.get('PYTHONPATH', '')))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -39,7 +39,7 @@ intersphinx_mapping = {
 }
 
 templates_path = ['_templates']
-exclude_patterns = ['build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -55,4 +55,4 @@ todo_include_todos = False
 
 html_theme = 'sphinx_rtd_theme'
 
-#html_static_path = ['_static/']
+# html_static_path = ['_static/']
