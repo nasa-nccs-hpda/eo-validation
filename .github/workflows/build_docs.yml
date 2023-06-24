@@ -1,61 +1,22 @@
-name: Publish Docs
+name: Sphinx build
 
-on:
-  push:
-    branches: [ main ]
-  #release:
-  #  types: [ created ]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
-  cancel-in-progress: true
+on: push
 
 jobs:
-  docs:
-    name: Publish Docs
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-
-      - name: Setup Conda
-        uses: s-weigand/setup-conda@v1
-        with:
-          python-version: 3.9
-          conda-channels: conda-forge
-
-      - name: Install and Build
-        shell: bash
-        run: |
-          conda config --prepend channels conda-forge
-          conda config --set channel_priority strict
-          conda create -n docs python=3.9 rasterio xarray scipy pyproj pandoc sphinx sphinx-autodoc-typehints jupyter_sphinx sphinx_rtd_theme
-          source activate docs
-          python -m pip install -e .[doc]
-          # sphinx-build -b html docs/ docs/_build/
-          cd docs/
-          make html
-
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        if: ${{ github.event_name == 'release' }}
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          #folder: docs/_build/
-          folder: docs/_build/html
-          clean: false
-          target-folder: ${{ github.ref }}
-
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        if: ${{ github.event_name == 'push' }}
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          #folder: docs/_build/
-          folder: docs/_build/html
-          clean: false
-          target-folder: latest
+    - uses: actions/checkout@v3
+    - name: Build HTML
+      uses: ammaraskar/sphinx-action@master
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: html-docs
+        path: docs/build/html/
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/build/html
