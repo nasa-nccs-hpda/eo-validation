@@ -28,6 +28,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx_click.ext",
+    "sphinx.ext.githubpages",
     "nbsphinx",
 ]
 
