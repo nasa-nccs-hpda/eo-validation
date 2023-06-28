@@ -25,8 +25,11 @@ from ipyleaflet import (
     WidgetControl
 )
 
-os.environ['LOCALTILESERVER_CLIENT_PREFIX'] = \
-    f"{os.environ['JUPYTERHUB_SERVICE_PREFIX'].lstrip('/')}/proxy/{{port}}"
+try:
+    os.environ['LOCALTILESERVER_CLIENT_PREFIX'] = \
+        f"{os.environ['JUPYTERHUB_SERVICE_PREFIX'].lstrip('/')}/proxy/{{port}}"
+except KeyError:
+    logging.info('No Jupyer service to configure proxy for.')
 
 from localtileserver import get_leaflet_tile_layer, TileClient
 
