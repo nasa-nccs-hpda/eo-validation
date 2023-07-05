@@ -37,6 +37,7 @@ class ValidationDashboard(ipyleaflet.Map):
     Modified: https://github.com/giswqs/geodemo/blob/master/geodemo/geodemo.py
     Args:
         ipyleaflet (ipyleaflet.Map): An ipyleaflet map.
+        center (list int): location to center the map
     Returns:
         object: ipyleaflet map object.
     """
