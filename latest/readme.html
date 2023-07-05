@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>eo-validation &mdash; eo-validation 0.0.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,10 +11,9 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -90,7 +90,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="eo-validation">
+  <section id="eo-validation">
 <h1>eo-validation<a class="headerlink" href="#eo-validation" title="Permalink to this heading"></a></h1>
 <a class="reference external image-reference" href="https://github.com/nasa-nccs-hpda/eo-validation/actions/workflows/lint.yml"><img alt="https://github.com/nasa-nccs-hpda/eo-validation/actions/workflows/lint.yml/badge.svg" src="https://github.com/nasa-nccs-hpda/eo-validation/actions/workflows/lint.yml/badge.svg" /></a>
 <p><strong>Earth Observation Validation Tool for Individuals and Teams</strong></p>
@@ -106,15 +106,15 @@
 <li><p><a class="reference internal" href="#contributors">Contributors</a></p></li>
 <li><p><a class="reference internal" href="#references">References</a></p></li>
 </ul>
-<div class="section" id="objectives">
+<section id="objectives">
 <h2>Objectives<a class="headerlink" href="#objectives" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Platform for collaborative validation of remotely sensed data</p></li>
 <li><p>Infrastructure to support multi-tenant visualization of moderate to very-high resolution data</p></li>
 <li><p>Interactive dashboard for data and validation analysis</p></li>
 </ul>
-</div>
-<div class="section" id="installation">
+</section>
+<section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
 <p>The following library is intended to be used to accelerate the development of validation products
 for remote sensing satellite imagery, or any other applications. eo-validation can be installed
@@ -130,11 +130,9 @@ of the tool on commodity-based and on-premises environments.</p>
 <p><strong>eo-validation</strong> is also available on <a class="reference external" href="https://anaconda.org/conda-forge/eo-validation">conda-forge</a>.
 If you have <a class="reference external" href="https://www.anaconda.com/distribution/#download-section">Anaconda</a> or <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>
 installed on your computer, you can create a conda Python environment to install eo-validation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">eo</span><span class="o">-</span><span class="n">validation</span><span class="o">-</span><span class="n">env</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.9</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">eo</span><span class="o">-</span><span class="n">validation</span><span class="o">-</span><span class="n">env</span> <span class="n">jupyter</span> <span class="n">ipysheet</span> <span class="n">leafmap</span> <span class="n">geopandas</span> <span class="n">localtileserver</span> <span class="n">rioxarray</span> <span class="o">--</span><span class="n">channel</span> <span class="n">anaconda</span> <span class="o">--</span><span class="n">channel</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span>
 <span class="n">conda</span> <span class="n">activate</span> <span class="n">eo</span><span class="o">-</span><span class="n">validation</span><span class="o">-</span><span class="n">env</span>
-<span class="n">conda</span> <span class="n">install</span> <span class="n">geopandas</span>
-<span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">mamba</span>
-<span class="n">mamba</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">eo</span><span class="o">-</span><span class="n">validation</span> <span class="n">localtileserver</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">eo</span><span class="o">-</span><span class="n">validation</span>
 </pre></div>
 </div>
 <p>Optionally, you can install <a class="reference external" href="https://github.com/ipython-contrib/jupyter_contrib_nbextensions">Jupyter notebook extensions</a>,
@@ -152,13 +150,13 @@ for more information.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">update</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">eo</span><span class="o">-</span><span class="n">validation</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="contributing">
+</section>
+<section id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading"></a></h2>
 <p>Contributions are welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given.</p>
 <p>You can contribute in many ways:</p>
-<div class="section" id="report-bugs">
+<section id="report-bugs">
 <h3>Report Bugs<a class="headerlink" href="#report-bugs" title="Permalink to this heading"></a></h3>
 <p>Report bugs at <a class="reference external" href="https://github.com/nasa-nccs-hpda/eo-validation/issues">https://github.com/nasa-nccs-hpda/eo-validation/issues</a>.</p>
 <p>If you are reporting a bug, please include:</p>
@@ -167,24 +165,24 @@ helps, and credit will always be given.</p>
 <li><p>Any details about your local setup that might be helpful in troubleshooting.</p></li>
 <li><p>Detailed steps to reproduce the bug.</p></li>
 </ul>
-</div>
-<div class="section" id="fix-bugs">
+</section>
+<section id="fix-bugs">
 <h3>Fix Bugs<a class="headerlink" href="#fix-bugs" title="Permalink to this heading"></a></h3>
 <p>Look through the GitHub issues for bugs. Anything tagged with “bug” and “help
 wanted” is open to whoever wants to implement it.</p>
-</div>
-<div class="section" id="implement-features">
+</section>
+<section id="implement-features">
 <h3>Implement Features<a class="headerlink" href="#implement-features" title="Permalink to this heading"></a></h3>
 <p>Look through the GitHub issues for features. Anything tagged with “enhancement”
 and “help wanted” is open to whoever wants to implement it.</p>
-</div>
-<div class="section" id="write-documentation">
+</section>
+<section id="write-documentation">
 <h3>Write Documentation<a class="headerlink" href="#write-documentation" title="Permalink to this heading"></a></h3>
 <p>eo-validation could always use more documentation, whether as part of the
 official eo-validation docs, in docstrings, or even on the web in blog posts,
 articles, and such.</p>
-</div>
-<div class="section" id="submit-feedback">
+</section>
+<section id="submit-feedback">
 <h3>Submit Feedback<a class="headerlink" href="#submit-feedback" title="Permalink to this heading"></a></h3>
 <p>The best way to send feedback is to file an issue at <a class="reference external" href="https://github.com/nasa-nccs-hpda/eo-validation/issues">https://github.com/nasa-nccs-hpda/eo-validation/issues</a>.</p>
 <p>If you are proposing a feature:</p>
@@ -194,20 +192,20 @@ articles, and such.</p>
 <li><p>Remember that this is a volunteer-driven project, and that contributions
 are welcome :)</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="contributors">
+</section>
+</section>
+<section id="contributors">
 <h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Jordan A. Caraballo-Vega, <a class="reference external" href="mailto:jordan&#46;a&#46;caraballo-vega&#37;&#52;&#48;nasa&#46;gov">jordan<span>&#46;</span>a<span>&#46;</span>caraballo-vega<span>&#64;</span>nasa<span>&#46;</span>gov</a></p></li>
 <li><p>Caleb S. Spradlin, <a class="reference external" href="mailto:caleb&#46;s&#46;spradlin&#37;&#52;&#48;nasa&#46;gov">caleb<span>&#46;</span>s<span>&#46;</span>spradlin<span>&#64;</span>nasa<span>&#46;</span>gov</a></p></li>
 </ul>
-</div>
-<div class="section" id="references">
+</section>
+<section id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this heading"></a></h2>
 <p><a class="reference external" href="https://github.com/opengeos/leafmap">leafmap</a></p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
