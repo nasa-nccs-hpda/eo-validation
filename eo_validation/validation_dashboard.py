@@ -33,11 +33,12 @@ from localtileserver import get_leaflet_tile_layer, TileClient
 
 
 class ValidationDashboard(ipyleaflet.Map):
-    """
-    This Map class inherits the ipyleaflet Map class.
+    """This Map class inherits the ipyleaflet Map class.
     Modified: https://github.com/giswqs/geodemo/blob/master/geodemo/geodemo.py
     Args:
         ipyleaflet (ipyleaflet.Map): An ipyleaflet map.
+    Returns:
+        object: ipyleaflet map object.
     """
 
     def __init__(self, **kwargs):
@@ -90,9 +91,9 @@ class ValidationDashboard(ipyleaflet.Map):
         if "data_dir" not in kwargs:
             self.data_dir = os.path.expanduser('~')
             # Definition for Explore and SMCE clusters
-            #if self.hostname[:3] == 'gpu':
+            # if self.hostname[:3] == 'gpu':
             #    self.data_dir = '/explore/nobackup/projects/3sl/data/Tappan'
-            #else:
+            # else:
             #    self.data_dir = '/home/jovyan/efs/projects/3sl/data/Tappan'
         else:
             self.data_dir = kwargs['data_dir']
