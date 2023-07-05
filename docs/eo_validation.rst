@@ -14,7 +14,6 @@ Install with pip
 Creating a new environment in your local system
 ::
     conda create -n validation-notebook jupyter ipysheet leafmap geopandas localtileserver rioxarray --channel anaconda --channel conda-forge
-    jupyter notebook
 
 API
 ----

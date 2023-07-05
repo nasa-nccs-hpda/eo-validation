@@ -50,11 +50,9 @@ installed on your computer, you can create a conda Python environment to install
 
 .. code:: python
 
-  conda create -n eo-validation-env python=3.9
+  conda create -n eo-validation-env jupyter ipysheet leafmap geopandas localtileserver rioxarray --channel anaconda --channel conda-forge
   conda activate eo-validation-env
-  conda install geopandas
-  conda install -c conda-forge mamba
-  mamba install -c conda-forge eo-validation localtileserver
+  pip install eo-validation
 
 Optionally, you can install `Jupyter notebook extensions <https://github.com/ipython-contrib/jupyter_contrib_nbextensions>`__,
 which can improve your productivity in the notebook environment. Some useful extensions include Table of Contents, Gist-it,

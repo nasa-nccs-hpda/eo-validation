@@ -32,7 +32,10 @@ extensions = [
     "sphinx_click.ext",
     "sphinx.ext.githubpages",
     "nbsphinx",
+    "autodocsumm"
 ]
+
+autodoc_default_options = {"autosummary": True}
 
 intersphinx_mapping = {
     "pyproj": ("https://pyproj4.github.io/pyproj/stable/", None),
