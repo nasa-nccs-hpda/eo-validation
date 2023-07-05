@@ -7,10 +7,12 @@ Welcome to eo-validation's documentation!
 =========================================
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
-   eo_validation
+   readme
+   examples
+   modules
 
 Indices and tables
 ==================

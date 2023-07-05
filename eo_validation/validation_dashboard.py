@@ -25,11 +25,9 @@ from ipyleaflet import (
     WidgetControl
 )
 
-try:
+if os.getenv("JUPYTERHUB_SERVICE_PREFIX") is not None:
     os.environ['LOCALTILESERVER_CLIENT_PREFIX'] = \
         f"{os.environ['JUPYTERHUB_SERVICE_PREFIX'].lstrip('/')}/proxy/{{port}}"
-except KeyError:
-    logging.info('No Jupyer service to configure proxy for.')
 
 from localtileserver import get_leaflet_tile_layer, TileClient
 
@@ -90,38 +88,44 @@ class ValidationDashboard(ipyleaflet.Map):
 
         # Define data directory, if no argument given, proceed with defaults
         if "data_dir" not in kwargs:
+            self.data_dir = os.path.expanduser('~')
             # Definition for Explore and SMCE clusters
-            if self.hostname[:3] == 'gpu':
-                self.data_dir = '/explore/nobackup/projects/3sl/data/Tappan'
-            else:
-                self.data_dir = '/home/jovyan/efs/projects/3sl/data/Tappan'
+            #if self.hostname[:3] == 'gpu':
+            #    self.data_dir = '/explore/nobackup/projects/3sl/data/Tappan'
+            #else:
+            #    self.data_dir = '/home/jovyan/efs/projects/3sl/data/Tappan'
         else:
             self.data_dir = kwargs['data_dir']
         assert os.path.exists(self.data_dir), f'{self.data_dir} does not exist'
 
         # Define labels directory, if no argument given, proceed with defaults
         if "mask_dir" not in kwargs:
+            self.mask_dir = os.path.expanduser('~')
             # Definition for Explore and SMCE clusters
-            if self.hostname[:3] == 'gpu':
-                self.mask_dir = '/explore/nobackup/projects/ilab/projects/' + \
-                    'Senegal/3sl/products/land_cover/dev/otcb.v1/Tappan'
-            else:
-                self.mask_dir = \
-                    '/home/jovyan/efs/projects/3sl/products/otcb.v1/Tappan'
+            # if self.hostname[:3] == 'gpu':
+            #    self.mask_dir = '/explore/nobackup/projects/ilab/projects/' + \
+            #        'Senegal/3sl/products/land_cover/dev/otcb.v1/Tappan'
+            # else:
+            #    self.mask_dir = \
+            #        '/home/jovyan/efs/projects/3sl/products/otcb.v1/Tappan'
         else:
             self.mask_dir = kwargs['mask_dir']
         assert os.path.exists(self.mask_dir), f'{self.mask_dir} does not exist'
 
         # Define output directory, if no argument given, proceed with defaults
         if "output_dir" not in kwargs:
+            self.username = self.hostname.split('-')[-1]
+            self.output_dir = os.path.join(
+                os.path.expanduser('~'), 'eo-validation'
+            )
             # Definition for Explore and SMCE clusters
-            if self.hostname[:3] == 'gpu':
-                self.username = os.environ['USER']
-                self.output_dir = \
-                    '/explore/nobackup/projects/3sl/development/scratch'
-            else:
-                self.username = self.hostname.split('-')[-1]
-                self.output_dir = '/home/jovyan/efs/projects/3sl/validation'
+            # if self.hostname[:3] == 'gpu':
+            #    self.username = os.environ['USER']
+            #    self.output_dir = \
+            #        '/explore/nobackup/projects/3sl/development/scratch'
+            # else:
+            #    self.username = self.hostname.split('-')[-1]
+            #    self.output_dir = '/home/jovyan/efs/projects/3sl/validation'
         else:
             self.output_dir = kwargs['output_dir']
 
@@ -143,7 +147,7 @@ class ValidationDashboard(ipyleaflet.Map):
 
         # Define default RGB bands
         if "rgb_bands" not in kwargs:
-            self.rgb_bands = [7, 3, 2]
+            self.rgb_bands = [1, 2, 3]
         else:
             self.rgb_bands = kwargs['rgb_bands']
             assert len(self.rgb_bands) == 3, \
@@ -151,7 +155,7 @@ class ValidationDashboard(ipyleaflet.Map):
 
         # Define wether we allow users to define their own bands
         if "rgb_disabled" not in kwargs:
-            self.rgb_disabled = True
+            self.rgb_disabled = False
         else:
             self.rgb_disabled = kwargs['rgb_disabled']
 

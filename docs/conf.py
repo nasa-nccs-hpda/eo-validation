@@ -4,9 +4,11 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
-import importlib.metadata
 
 sys.path.insert(0, os.path.abspath('..'))
+
+import eo_validation
+
 # package_path = os.path.abspath('..')
 # os.environ['PYTHONPATH'] = ':'.join((package_path, os.environ.get('PYTHONPATH', '')))
 
@@ -44,10 +46,15 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-source_suffix = ".rst"
+#source_suffix ={
+#    '.rst': 'restructuredtext',
+#    '.txt': 'markdown',
+#    '.md': 'markdown',
+#    '.ipynb': 'myst-nb'
+#}
 master_doc = "index"
 
-version = release = importlib.metadata.version('eo-validation')
+version = release = eo_validation.__version__
 
 pygments_style = "sphinx"
 
@@ -56,3 +63,12 @@ todo_include_todos = False
 html_theme = 'sphinx_rtd_theme'
 
 # html_static_path = ['_static/']
+
+myst_enable_extensions = [
+    "amsmath",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "html_image",
+]
+myst_url_schemes = ("http", "https", "mailto")
