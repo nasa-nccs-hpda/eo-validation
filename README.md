@@ -2,6 +2,7 @@
 
 Earth Observation Validation Tool for Individuals and Teams
 
+[![DOI](https://zenodo.org/badge/638678328.svg)](https://zenodo.org/badge/latestdoi/638678328)
 ![Code style: PEP8](https://github.com/nasa-nccs-hpda/eo-validation/actions/workflows/lint.yml/badge.svg)
 
 ## Documentation
