@@ -9,6 +9,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+docs/jupyter_execute/
 .Python
 build/
 develop-eggs/
