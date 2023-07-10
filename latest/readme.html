@@ -51,6 +51,10 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">eo-validation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#objectives">Objectives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#infrastructure">Infrastructure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#individual-validation-quickstart">Individual Validation Quickstart</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#report-bugs">Report Bugs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fix-bugs">Fix Bugs</a></li>
@@ -102,6 +106,7 @@
 <ul class="simple">
 <li><p><a class="reference internal" href="#objectives">Objectives</a></p></li>
 <li><p><a class="reference internal" href="#installation">Installation</a></p></li>
+<li><p><a class="reference internal" href="#infrastructure">Infrastructure</a></p></li>
 <li><p><a class="reference internal" href="#contributing">Contributing</a></p></li>
 <li><p><a class="reference internal" href="#contributors">Contributors</a></p></li>
 <li><p><a class="reference internal" href="#references">References</a></p></li>
@@ -146,10 +151,35 @@ for more information.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">eo</span><span class="o">-</span><span class="n">validation</span>
 </pre></div>
 </div>
-<p>If you use conda, you can update eo-validation to the latest version by running the following command in your terminal:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">update</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">eo</span><span class="o">-</span><span class="n">validation</span>
+</section>
+<section id="infrastructure">
+<h2>Infrastructure<a class="headerlink" href="#infrastructure" title="Permalink to this heading"></a></h2>
+<p>The eo-validation package is a set of Jupyter-based notebooks to manage and structure the validation of remote sensing data.
+The validation notebooks can be run Individually and/or via a Team of observers.</p>
+<p>The <strong>Individual</strong> option assumes that a single observer will be performing the entire validation. This will generate a single
+database for the observer. The <strong>Team</strong> option assumes that multiple observers will evaluate each point in the database, being
+the end output an aggregated database that includes the points of all the observers.</p>
+<p>The core validation procedures followed by this notebook rely on the
+[Oloffson Best Practices method](<a class="reference external" href="https://reddcr.go.cr/sites/default/files/centro-de-documentacion/olofsson_et_al._2014_-_good_practices_for_estimating_area_and_assessing_accuracy_of_land_change.pdf">https://reddcr.go.cr/sites/default/files/centro-de-documentacion/olofsson_et_al._2014_-_good_practices_for_estimating_area_and_assessing_accuracy_of_land_change.pdf</a>).
+The main requirements are a <strong>data file</strong> in GeoTIFF format, and a <strong>mask file</strong> in GeoTIFF format. This data file
+will be used for visual interpretation. The mask file will be used to perform a stratified random sampling of points per
+mask class. If the mask file is not present, a completely random set of points will be generated for each data file.</p>
+<section id="individual-validation-quickstart">
+<h3>Individual Validation Quickstart<a class="headerlink" href="#individual-validation-quickstart" title="Permalink to this heading"></a></h3>
+<p>Download the Validation Dashboard</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">nasa</span><span class="o">-</span><span class="n">nccs</span><span class="o">-</span><span class="n">hpda</span><span class="o">/</span><span class="n">eo</span><span class="o">-</span><span class="n">validation</span><span class="o">/</span><span class="n">main</span><span class="o">/</span><span class="n">notebooks</span><span class="o">/</span><span class="n">ValidationDashboard</span><span class="o">.</span><span class="n">ipynb</span>
 </pre></div>
 </div>
+<p>Then, open the validation notebook from a Jupyter interface. You will need to modify several arguments from the validation
+dashboard in order to successfully point to the necessary directories and paths. An example is listed below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">from</span> <span class="nn">eo_validation.validation_dashboard</span> <span class="kn">import</span> <span class="n">ValidationDashboard</span>
+
+<span class="n">dashboard</span> <span class="o">=</span> <span class="n">ValidationDashboard</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">dashboard</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading"></a></h2>
