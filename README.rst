@@ -82,7 +82,7 @@ database for the observer. The **Team** option assumes that multiple observers w
 the end output an aggregated database that includes the points of all the observers.
 
 The core validation procedures followed by this notebook rely on the
-[Oloffson Best Practices method](https://reddcr.go.cr/sites/default/files/centro-de-documentacion/olofsson_et_al._2014_-_good_practices_for_estimating_area_and_assessing_accuracy_of_land_change.pdf).
+`Oloffson Best Practices method <https://reddcr.go.cr/sites/default/files/centro-de-documentacion/olofsson_et_al._2014_-_good_practices_for_estimating_area_and_assessing_accuracy_of_land_change.pdf>`_.
 The main requirements are a **data file** in GeoTIFF format, and a **mask file** in GeoTIFF format. This data file
 will be used for visual interpretation. The mask file will be used to perform a stratified random sampling of points per
 mask class. If the mask file is not present, a completely random set of points will be generated for each data file.
@@ -104,7 +104,9 @@ dashboard in order to successfully point to the necessary directories and paths.
   from IPython.display import display
   from eo_validation.validation_dashboard import ValidationDashboard
 
-  dashboard = ValidationDashboard()
+  dashboard = ValidationDashboard(
+      center=[14, -14]
+  )
   display(dashboard)
 
 Contributing

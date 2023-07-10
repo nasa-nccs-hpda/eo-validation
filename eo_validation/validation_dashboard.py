@@ -126,7 +126,7 @@ class ValidationDashboard(ipyleaflet.Map):
         # Define output directory, if no argument given, proceed with defaults
         if "output_dir" not in kwargs:
             self.output_dir = os.path.join(
-                os.path.expanduser('~'), 'eo-validation'
+                os.path.expanduser('~'), 'eo-validation-output'
             )
         else:
             self.output_dir = kwargs['output_dir']
