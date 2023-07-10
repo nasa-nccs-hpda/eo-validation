@@ -53,6 +53,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#infrastructure">Infrastructure</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#individual-validation-quickstart">Individual Validation Quickstart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#teams-validation-quickstart">Teams’ Validation Quickstart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#teams-validation-example">Teams’ Validation Example</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a><ul>
@@ -172,15 +174,98 @@ mask class. If the mask file is not present, a completely random set of points w
 </div>
 <p>Then, open the validation notebook from a Jupyter interface. You will need to modify several arguments from the validation
 dashboard in order to successfully point to the necessary directories and paths. An example is listed below:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">basemaps</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
 <span class="kn">from</span> <span class="nn">eo_validation.validation_dashboard</span> <span class="kn">import</span> <span class="n">ValidationDashboard</span>
 
 <span class="n">dashboard</span> <span class="o">=</span> <span class="n">ValidationDashboard</span><span class="p">(</span>
-    <span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="o">-</span><span class="mi">14</span><span class="p">]</span>
+    <span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="o">-</span><span class="mi">14</span><span class="p">],</span>
+    <span class="n">zoom</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">max_zoom</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">default_max_zoom</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">default_zoom</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+    <span class="n">scroll_wheel_zoom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">basemap</span><span class="o">=</span><span class="n">basemaps</span><span class="o">.</span><span class="n">Esri</span><span class="o">.</span><span class="n">WorldImagery</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="s2">&quot;600px&quot;</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="o">=</span><span class="s2">&quot;/efs/projects/3sl/data/Tappan&quot;</span><span class="p">,</span>
+    <span class="n">mask_dir</span><span class="o">=</span><span class="s2">&quot;/efs/projects/3sl/labelsv2&quot;</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;/home/jovyan/eo-validation-output-test&quot;</span><span class="p">,</span>
+    <span class="n">default_bands</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;Coastal Blue&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;Green&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;Yellow&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;Red&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;Red Edge&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;NIR1&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;NIR2&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">rgb_bands</span> <span class="o">=</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">rgb_disabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">validation_classes</span><span class="o">=</span><span class="p">[</span>
+        <span class="s1">&#39;other&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;trees/shrub&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;cropland&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;other vegetation&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;water&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;build&#39;</span>
+    <span class="p">],</span>
+    <span class="n">mask_classes</span><span class="o">=</span><span class="p">[</span>
+        <span class="s1">&#39;other&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;tree&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;crop&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;burn&#39;</span>
+    <span class="p">],</span>
+    <span class="n">points_dir</span><span class="o">=</span><span class="s1">&#39;/home/jovyan/efs/projects/3sl/validation/original_points&#39;</span><span class="p">,</span>
+    <span class="n">gen_points</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">n_points</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">expected_accuracies</span><span class="o">=</span><span class="p">[</span><span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">],</span>
+    <span class="n">expected_standard_error</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">product_name</span><span class="o">=</span><span class="s1">&#39;otcb&#39;</span><span class="p">,</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;band&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">2048</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">2048</span><span class="p">}</span>
 <span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">dashboard</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>The arguments from the ValidationDashboard class are as follow:</p>
+<ul class="simple">
+<li><p><strong>center</strong> (List[int, int]): center location to start map at, default: [14, -14]</p></li>
+<li><p><strong>zoom</strong> (int): zoom value to start map at, default: 3</p></li>
+<li><p><strong>max_zoom</strong> (int): maximum zoom value to perform close up on validation points, default: 20</p></li>
+<li><p><strong>default_max_zoom</strong> (int): default maximum zoom value, default: 20</p></li>
+<li><p><strong>default_zoom</strong> (int): default zoom value, default: 18</p></li>
+<li><p><strong>scroll_wheel_zoom</strong> (bool): enable mouse scroll to perform zoom, default: True</p></li>
+<li><p><strong>keyboard</strong> (bool): enable keyboard options to move across points, default: True</p></li>
+<li><p><strong>basemap</strong> (ipyleaflet.basemap): basemap object from ipyleaflet to use as background, default: basemaps.Esri.WorldImagery</p></li>
+<li><p><strong>height</strong> (str): height of the output map in the Jupyter cell, default: 600px</p></li>
+<li><p><strong>data_dir</strong> (str): directory to point at input data files in GeoTIFF, default: ~/</p></li>
+<li><p><strong>mask_dir</strong> (str): directory to point at mask data files in GeoTIFF; if not available, random points without stratification will be generated, default: ~/</p></li>
+<li><p><strong>output_dir</strong> (str): directory to store output database at, default: ~/eo-validation-output</p></li>
+<li><p><strong>default_bands</strong> (List[tuple]): list of tuples representing band values, default: [(‘Coastal Blue’, 1), (‘Blue’, 2), (‘Green’, 3), (‘Yellow’, 4), (‘Red’, 5), (‘Red Edge’, 6), (‘NIR1’, 7), (‘NIR2’, 8)]</p></li>
+<li><p><strong>rgb_bands</strong> (List[int]): list of integer bands to use as RGB, default: [1, 2, 3]</p></li>
+<li><p><strong>rgb_disabled</strong> (bool): disable toggling RGB band dropdown, default: False</p></li>
+<li><p><strong>validation_classes</strong> (List[str]): list of validation classes to use, default: [‘other’, ‘trees/shrub’, ‘cropland’, ‘other vegetation’, ‘water’, ‘build’]</p></li>
+<li><p><strong>mask_classes</strong> (List[str]): list of classes to use in the random stratification process, default: [‘other’, ‘tree’, ‘crop’, ‘burn’]</p></li>
+<li><p><strong>points_dir</strong>: (str): directory where original points are located if they were already generated), default: ~/eo-validation/original_points</p></li>
+<li><p><strong>gen_points</strong> (bool): generate random points on the fly, default: True</p></li>
+<li><p><strong>n_points</strong> (int): number of points to generate if <strong>gen_points</strong> is True, default: 200</p></li>
+<li><p><strong>expected_accuracies</strong> (List[float]): list of expected accuracies for each class following Oloffson method, default: [0.90, 0.90, 0.90, 0.90]</p></li>
+<li><p><strong>expected_standard_error</strong> (float): expected standard error per class, default: 0.01</p></li>
+<li><p><strong>chunks</strong> (dict): data sharding options from xarray, default: {“band”: 1, “x”: 2048, “y”: 2048}</p></li>
+</ul>
+</section>
+<section id="teams-validation-quickstart">
+<h3>Teams’ Validation Quickstart<a class="headerlink" href="#teams-validation-quickstart" title="Permalink to this heading"></a></h3>
+<p>Place data sowhere
+Create general points
+Open notebook</p>
+</section>
+<section id="teams-validation-example">
+<h3>Teams’ Validation Example<a class="headerlink" href="#teams-validation-example" title="Permalink to this heading"></a></h3>
+<p>Place data sowhere
+Create general points
+Open notebook</p>
 </section>
 </section>
 <section id="contributing">
