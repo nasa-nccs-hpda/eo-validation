@@ -160,7 +160,7 @@ The validation notebooks can be run Individually and/or via a Team of observers.
 database for the observer. The <strong>Team</strong> option assumes that multiple observers will evaluate each point in the database, being
 the end output an aggregated database that includes the points of all the observers.</p>
 <p>The core validation procedures followed by this notebook rely on the
-[Oloffson Best Practices method](<a class="reference external" href="https://reddcr.go.cr/sites/default/files/centro-de-documentacion/olofsson_et_al._2014_-_good_practices_for_estimating_area_and_assessing_accuracy_of_land_change.pdf">https://reddcr.go.cr/sites/default/files/centro-de-documentacion/olofsson_et_al._2014_-_good_practices_for_estimating_area_and_assessing_accuracy_of_land_change.pdf</a>).
+<a class="reference external" href="https://reddcr.go.cr/sites/default/files/centro-de-documentacion/olofsson_et_al._2014_-_good_practices_for_estimating_area_and_assessing_accuracy_of_land_change.pdf">Oloffson Best Practices method</a>.
 The main requirements are a <strong>data file</strong> in GeoTIFF format, and a <strong>mask file</strong> in GeoTIFF format. This data file
 will be used for visual interpretation. The mask file will be used to perform a stratified random sampling of points per
 mask class. If the mask file is not present, a completely random set of points will be generated for each data file.</p>
@@ -175,7 +175,9 @@ dashboard in order to successfully point to the necessary directories and paths.
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
 <span class="kn">from</span> <span class="nn">eo_validation.validation_dashboard</span> <span class="kn">import</span> <span class="n">ValidationDashboard</span>
 
-<span class="n">dashboard</span> <span class="o">=</span> <span class="n">ValidationDashboard</span><span class="p">()</span>
+<span class="n">dashboard</span> <span class="o">=</span> <span class="n">ValidationDashboard</span><span class="p">(</span>
+    <span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="o">-</span><span class="mi">14</span><span class="p">]</span>
+<span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">dashboard</span><span class="p">)</span>
 </pre></div>
 </div>
