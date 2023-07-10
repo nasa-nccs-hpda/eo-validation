@@ -101,13 +101,98 @@ dashboard in order to successfully point to the necessary directories and paths.
 
 .. code:: python
 
+  from ipyleaflet import basemaps
   from IPython.display import display
   from eo_validation.validation_dashboard import ValidationDashboard
 
   dashboard = ValidationDashboard(
-      center=[14, -14]
+      center=[14, -14],
+      zoom=3,
+      max_zoom=20,
+      default_max_zoom=20,
+      default_zoom=18,
+      scroll_wheel_zoom=True,
+      keyboard=True,
+      basemap=basemaps.Esri.WorldImagery,
+      height="600px",
+      data_dir="/efs/projects/3sl/data/Tappan",
+      mask_dir="/efs/projects/3sl/labelsv2",
+      output_dir="/home/jovyan/eo-validation-output-test",
+      default_bands=[
+          ('Coastal Blue', 1),
+          ('Blue', 2),
+          ('Green', 3),
+          ('Yellow', 4),
+          ('Red', 5),
+          ('Red Edge', 6),
+          ('NIR1', 7),
+          ('NIR2', 8)
+      ],
+      rgb_bands = [7, 3, 2],
+      rgb_disabled=False,
+      validation_classes=[
+          'other',
+          'trees/shrub',
+          'cropland',
+          'other vegetation',
+          'water',
+          'build'
+      ],
+      mask_classes=[
+          'other',
+          'tree',
+          'crop',
+          'burn'
+      ],
+      points_dir='/home/jovyan/efs/projects/3sl/validation/original_points',
+      gen_points=True,
+      n_points=200,
+      expected_accuracies=[0.90, 0.90, 0.90, 0.90],
+      expected_standard_error=0.01,
+      product_name='otcb',
+      chunks={"band": 1, "x": 2048, "y": 2048}
   )
   display(dashboard)
+
+The arguments from the ValidationDashboard class are as follow:
+
+- **center** (List[int, int]): center location to start map at, default: [14, -14]
+- **zoom** (int): zoom value to start map at, default: 3
+- **max_zoom** (int): maximum zoom value to perform close up on validation points, default: 20
+- **default_max_zoom** (int): default maximum zoom value, default: 20
+- **default_zoom** (int): default zoom value, default: 18
+- **scroll_wheel_zoom** (bool): enable mouse scroll to perform zoom, default: True
+- **keyboard** (bool): enable keyboard options to move across points, default: True
+- **basemap** (ipyleaflet.basemap): basemap object from ipyleaflet to use as background, default: basemaps.Esri.WorldImagery
+- **height** (str): height of the output map in the Jupyter cell, default: 600px
+- **data_dir** (str): directory to point at input data files in GeoTIFF, default: ~/
+- **mask_dir** (str): directory to point at mask data files in GeoTIFF; if not available, random points without stratification will be generated, default: ~/
+- **output_dir** (str): directory to store output database at, default: ~/eo-validation-output
+- **default_bands** (List[tuple]): list of tuples representing band values, default: [('Coastal Blue', 1), ('Blue', 2), ('Green', 3), ('Yellow', 4), ('Red', 5), ('Red Edge', 6), ('NIR1', 7), ('NIR2', 8)]
+- **rgb_bands** (List[int]): list of integer bands to use as RGB, default: [1, 2, 3]
+- **rgb_disabled** (bool): disable toggling RGB band dropdown, default: False
+- **validation_classes** (List[str]): list of validation classes to use, default: ['other', 'trees/shrub', 'cropland', 'other vegetation', 'water', 'build']
+- **mask_classes** (List[str]): list of classes to use in the random stratification process, default: ['other', 'tree', 'crop', 'burn']
+- **points_dir**: (str): directory where original points are located if they were already generated), default: ~/eo-validation/original_points
+- **gen_points** (bool): generate random points on the fly, default: True
+- **n_points** (int): number of points to generate if **gen_points** is True, default: 200
+- **expected_accuracies** (List[float]): list of expected accuracies for each class following Oloffson method, default: [0.90, 0.90, 0.90, 0.90]
+- **expected_standard_error** (float): expected standard error per class, default: 0.01
+- **chunks** (dict): data sharding options from xarray, default: {"band": 1, "x": 2048, "y": 2048}
+
+Teams' Validation Quickstart
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Place data sowhere
+Create general points
+Open notebook
+
+Teams' Validation Example
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Place data sowhere
+Create general points
+Open notebook
 
 Contributing
 ------------

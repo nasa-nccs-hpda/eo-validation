@@ -206,12 +206,6 @@ class ValidationDashboard(ipyleaflet.Map):
         else:
             self.expected_standard_error = kwargs['expected_standard_error']
 
-        # Set product name
-        if "product_name" not in kwargs:
-            self.product_name = 'otcb'
-        else:
-            self.product_name = kwargs['product_name']
-
         # Set xarray chunk attributes
         if "chunks" not in kwargs:
             self.chunks = {"band": 1, "x": 2048, "y": 2048}
@@ -400,8 +394,6 @@ class ValidationDashboard(ipyleaflet.Map):
         ):
 
         # Extract label filename from data filename
-        # mask_filename = os.path.join(
-        #    self.mask_dir, f'{Path(in_raster).stem}.{self.product_name}.tif')
         mask_filename = glob(
             os.path.join(self.mask_dir, f'{Path(in_raster).stem}*.tif'))
         
