@@ -1,4 +1,5 @@
 import os
+import pwd
 import math
 import socket
 import ipysheet
@@ -9,6 +10,7 @@ import rioxarray as rxr
 import ipywidgets as widgets
 import whiteboxgui.whiteboxgui as wbt
 
+from glob import glob
 from pathlib import Path
 from ipyfilechooser import FileChooser
 from IPython.display import display
@@ -55,8 +57,20 @@ class ValidationDashboard(ipyleaflet.Map):
         # Define max_zoom options
         if "max_zoom" not in kwargs:
             kwargs["max_zoom"] = 20
+        else:
+            self.mask_dir = kwargs["max_zoom"]
+
+        # Define default_max_zoom options
+        if "default_max_zoom" not in kwargs:
             self.default_max_zoom = 20
+        else:
+            self.default_max_zoom = kwargs["default_max_zoom"]
+
+        # Define default_zoom options
+        if "default_zoom" not in kwargs:
             self.default_zoom = 18
+        else:
+            self.default_zoom = kwargs["default_zoom"]
 
         # Define zoom capabilities
         if "scroll_wheel_zoom" not in kwargs:
@@ -87,15 +101,17 @@ class ValidationDashboard(ipyleaflet.Map):
 
         # Retrieve hostname
         self.hostname = socket.gethostname()
+        
+        # Retrieve username
+        self.username = pwd.getpwuid(os.getuid())[0]
+        
+        # if the username is from a Daskhub instance with jovyan
+        if self.username == 'jovyan':
+            self.username = self.hostname.split('-')[-1]
 
         # Define data directory, if no argument given, proceed with defaults
         if "data_dir" not in kwargs:
             self.data_dir = os.path.expanduser('~')
-            # Definition for Explore and SMCE clusters
-            # if self.hostname[:3] == 'gpu':
-            #    self.data_dir = '/explore/nobackup/projects/3sl/data/Tappan'
-            # else:
-            #    self.data_dir = '/home/jovyan/efs/projects/3sl/data/Tappan'
         else:
             self.data_dir = kwargs['data_dir']
         assert os.path.exists(self.data_dir), f'{self.data_dir} does not exist'
@@ -103,31 +119,15 @@ class ValidationDashboard(ipyleaflet.Map):
         # Define labels directory, if no argument given, proceed with defaults
         if "mask_dir" not in kwargs:
             self.mask_dir = os.path.expanduser('~')
-            # Definition for Explore and SMCE clusters
-            # if self.hostname[:3] == 'gpu':
-            #    self.mask_dir = '/explore/nobackup/projects/ilab/projects/' + \
-            #        'Senegal/3sl/products/land_cover/dev/otcb.v1/Tappan'
-            # else:
-            #    self.mask_dir = \
-            #        '/home/jovyan/efs/projects/3sl/products/otcb.v1/Tappan'
         else:
             self.mask_dir = kwargs['mask_dir']
         assert os.path.exists(self.mask_dir), f'{self.mask_dir} does not exist'
 
         # Define output directory, if no argument given, proceed with defaults
         if "output_dir" not in kwargs:
-            self.username = self.hostname.split('-')[-1]
             self.output_dir = os.path.join(
                 os.path.expanduser('~'), 'eo-validation'
             )
-            # Definition for Explore and SMCE clusters
-            # if self.hostname[:3] == 'gpu':
-            #    self.username = os.environ['USER']
-            #    self.output_dir = \
-            #        '/explore/nobackup/projects/3sl/development/scratch'
-            # else:
-            #    self.username = self.hostname.split('-')[-1]
-            #    self.output_dir = '/home/jovyan/efs/projects/3sl/validation'
         else:
             self.output_dir = kwargs['output_dir']
 
@@ -178,8 +178,9 @@ class ValidationDashboard(ipyleaflet.Map):
 
         # Define pre-generated validations points
         if "points_dir" not in kwargs:
-            self.points_dir = \
-                '/home/jovyan/efs/projects/3sl/validation/original_points'
+            self.points_dir = os.path.join(
+                os.path.expanduser('~'), 'eo-validation', 'original_points'
+            )
         else:
             self.points_dir = kwargs['points_dir']
 
@@ -260,81 +261,134 @@ class ValidationDashboard(ipyleaflet.Map):
         self.center = raster_client.center()  # center Map around raster
         self.zoom = raster_client.default_zoom  # zoom to raster center
 
-    def generate_points(self, mask_filename: str, n_points: int = None):
+    def generate_points(
+            self,
+            raster_filename: str,
+            mask_filename: str,
+            n_points: int = None
+        ):
         """
         Generate points.
         """
-        # read prediction raster
-        raster_prediction = rxr.open_rasterio(
-            mask_filename, chunks=self.chunks)
-        raster_prediction.name = "predicted"
-        raster_prediction = raster_prediction.rio.reproject("EPSG:4326")
-        self.raster_crs = raster_prediction.rio.crs
+        if mask_filename is not None:
 
-        # Convert to dataframe and filter no-data
-        raster_prediction = \
-            raster_prediction.squeeze().to_dataframe().reset_index()
-        raster_prediction = raster_prediction.drop(
-            ['band', 'spatial_ref'], axis=1)  # drop some unecessary columns
+            # read prediction raster
+            raster_prediction = rxr.open_rasterio(
+                mask_filename, chunks=self.chunks)
+            raster_prediction.name = "predicted"
+            raster_prediction = raster_prediction.rio.reproject("EPSG:4326")
+            self.raster_crs = raster_prediction.rio.crs
 
-        # Only select appropiate values, remove no-data
-        raster_prediction = raster_prediction[
-            raster_prediction['predicted'] >= 0]
-        raster_prediction = raster_prediction[
-            raster_prediction['predicted'] < 255]
-
-        # Convert mask to int
-        raster_prediction = raster_prediction.astype({'predicted': 'int'})
-        unique_counts = raster_prediction['predicted'].value_counts()
-        original_shape = raster_prediction.shape[0]
-
-        percentage_counts, standard_deviation = [], []
-        for class_id, class_count in unique_counts.iteritems():
-            percentage_counts.append(class_count / original_shape)
-            standard_deviation.append(
-                math.sqrt(
-                    self.expected_accuracies[class_id]
-                    * (1 - self.expected_accuracies[class_id]))
-            )
-
-        unique_counts = unique_counts.to_frame()
-        unique_counts['percent'] = percentage_counts
-        unique_counts['standard_deviation'] = standard_deviation
-        unique_counts = unique_counts.round(2)
-
-        # Choose between Oloffson or static number of points
-        if n_points is not None:
-            val_total_points = n_points
-        else:
-            val_total_points = round(((
-                unique_counts['percent']
-                * unique_counts['standard_deviation']).sum()
-                / self.expected_standard_error) ** 2)
-
-        # Get the number of points per class
-        unique_counts['n_point'] = \
-            (unique_counts['percent'] * val_total_points).apply(np.floor)
-
-        if unique_counts['n_point'].sum() < val_total_points:
-            unique_counts.at[0, 'n_point'] += \
-                val_total_points - unique_counts['n_point'].sum()
-        elif unique_counts['n_point'].sum() > val_total_points:
-            unique_counts.at[0, 'n_point'] -= \
-                unique_counts['n_point'].sum() - val_total_points
-
-        for class_id, row in unique_counts.iterrows():
+            # Convert to dataframe and filter no-data
+            raster_prediction = \
+                raster_prediction.squeeze().to_dataframe().reset_index()
             raster_prediction = raster_prediction.drop(
-                raster_prediction[
-                    raster_prediction['predicted'] == class_id].sample(
-                        n=int(row['predicted'] - row['n_point']),
-                        random_state=24).index
-            )
+                ['band', 'spatial_ref'], axis=1)  # drop some unecessary columns
 
+            # Only select appropiate values, remove no-data
+            raster_prediction = raster_prediction[
+                raster_prediction['predicted'] >= 0]
+            raster_prediction = raster_prediction[
+                raster_prediction['predicted'] < 255]
+
+            # Make sure classes start from 1, substract 1 if not
+            if raster_prediction['predicted'].min() > 0:
+                raster_prediction['predicted'] = raster_prediction['predicted'] - 1
+
+            # Convert mask to int
+            raster_prediction = raster_prediction.astype({'predicted': 'int'})
+            unique_counts = raster_prediction['predicted'].value_counts()
+            original_shape = raster_prediction.shape[0]
+            
+            # Make sure expected accuracies match size of classes found
+            if len(self.expected_accuracies) != raster_prediction['predicted'].max() + 1:
+                self.expected_accuracies = \
+                    [self.expected_accuracies[0]] * (raster_prediction['predicted'].max() + 1)
+
+            print("self.expected_accuracies", self.expected_accuracies)
+            print("unique_counts", unique_counts)
+            print("unique_counts.shape", unique_counts.shape)
+            
+            percentage_counts, standard_deviation = [], []
+            for class_id, class_count in unique_counts.iteritems():
+                percentage_counts.append(class_count / original_shape)
+                standard_deviation.append(
+                    math.sqrt(
+                        self.expected_accuracies[class_id]
+                        * (1 - self.expected_accuracies[class_id]))
+                )
+
+            unique_counts = unique_counts.to_frame()
+            unique_counts['percent'] = percentage_counts
+            unique_counts['standard_deviation'] = standard_deviation
+            unique_counts = unique_counts.round(2)
+
+            # Choose between Oloffson or static number of points
+            if n_points is not None:
+                val_total_points = n_points
+            else:
+                val_total_points = round(((
+                    unique_counts['percent']
+                    * unique_counts['standard_deviation']).sum()
+                    / self.expected_standard_error) ** 2)
+
+            # Get the number of points per class
+            unique_counts['n_point'] = \
+                (unique_counts['percent'] * val_total_points).apply(np.floor)
+
+            if unique_counts['n_point'].sum() < val_total_points:
+                unique_counts.at[0, 'n_point'] += \
+                    val_total_points - unique_counts['n_point'].sum()
+            elif unique_counts['n_point'].sum() > val_total_points:
+                
+                # getting negative from here, lets take the biggest number
+                # print("AHHHHHHH", unique_counts['n_point'].idxmax())
+                
+                unique_counts.at[unique_counts['n_point'].idxmax(), 'n_point'] -= \
+                    unique_counts['n_point'].sum() - val_total_points
+
+            for class_id, row in unique_counts.iterrows():
+                print("last", class_id, row)
+                raster_prediction = raster_prediction.drop(
+                    raster_prediction[
+                        raster_prediction['predicted'] == class_id].sample(
+                            n=int(row['predicted'] - row['n_point']),
+                            random_state=24).index
+                )
+        
+        # we do not have any mask filename
+        else:
+            
+            # read prediction raster
+            raster_prediction = rxr.open_rasterio(
+                raster_filename, chunks=self.chunks)[0, :, :]
+            raster_prediction.name = "predicted"
+            raster_prediction = raster_prediction.rio.reproject("EPSG:4326")
+            self.raster_crs = raster_prediction.rio.crs
+            
+            # Convert to dataframe and filter no-data
+            raster_prediction = \
+                raster_prediction.squeeze().to_dataframe().reset_index()
+            raster_prediction = raster_prediction.drop(
+                ['band', 'spatial_ref'], axis=1)  # drop some unecessary columns
+
+            # Only select appropiate values, remove no-data
+            raster_prediction = raster_prediction[
+                raster_prediction['predicted'] >= 0]
+
+            # Convert mask to int
+            raster_prediction = raster_prediction.astype({'predicted': 'int'})
+
+            # Generate random points (drop randomly from the dataset
+            raster_prediction = raster_prediction.sample(n = n_points)
+
+        # Generate geometry dataframe
         geometry = gpd.points_from_xy(raster_prediction.x, raster_prediction.y)
         raster_prediction = gpd.GeoDataFrame(
             raster_prediction,
             crs=self.raster_crs,
             geometry=geometry).reset_index(drop=True)
+
         return raster_prediction
 
     def add_markers(
@@ -346,8 +400,19 @@ class ValidationDashboard(ipyleaflet.Map):
         ):
 
         # Extract label filename from data filename
-        mask_filename = os.path.join(
-            self.mask_dir, f'{Path(in_raster).stem}.{self.product_name}.tif')
+        # mask_filename = os.path.join(
+        #    self.mask_dir, f'{Path(in_raster).stem}.{self.product_name}.tif')
+        mask_filename = glob(
+            os.path.join(self.mask_dir, f'{Path(in_raster).stem}*.tif'))
+        
+        print("GOING INSIDE GLOB", os.path.join(self.mask_dir, f'{Path(in_raster).stem}*.tif'))
+        print("MASK_FILENAME GLOB", mask_filename)
+
+        if len(mask_filename) > 0:
+            mask_filename = mask_filename[0]
+        else:
+            mask_filename = None
+        print("MASK_FILENAME", mask_filename)
         
         original_points_filename = os.path.join(
             self.points_dir, f'{Path(in_raster).stem}.gpkg')
@@ -369,7 +434,8 @@ class ValidationDashboard(ipyleaflet.Map):
 
         # Case #3: no points available, generate them from scratch
         else:
-            validation_points = self.generate_points(mask_filename, n_points)
+            validation_points = self.generate_points(
+                in_raster, mask_filename, n_points)
             validation_points = validation_points.drop(
                 ['predicted'], axis=1).to_crs(4326)
             validation_points['operator'] = 'other'
