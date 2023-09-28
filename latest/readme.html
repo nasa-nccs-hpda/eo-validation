@@ -11,11 +11,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -51,12 +51,15 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">eo-validation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#objectives">Objectives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#infrastructure">Infrastructure</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#infrastructure">Infrastructure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#individual-validation-quickstart">Individual Validation Quickstart</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#teams-validation-quickstart">Teams’ Validation Quickstart</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#teams-validation-example">Teams’ Validation Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#teams-validation-example-on-the-science-managed-cloud-environment">Teams’ Validation Example on the Science Managed Cloud Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overall-validation-workflow">Overall Validation Workflow</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#report-bugs">Report Bugs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fix-bugs">Fix Bugs</a></li>
@@ -97,7 +100,7 @@
            <div itemprop="articleBody">
              
   <section id="eo-validation">
-<h1>eo-validation<a class="headerlink" href="#eo-validation" title="Permalink to this heading"></a></h1>
+<h1>eo-validation<a class="headerlink" href="#eo-validation" title="Link to this heading"></a></h1>
 <a class="reference external image-reference" href="https://github.com/nasa-nccs-hpda/eo-validation/actions/workflows/lint.yml"><img alt="https://github.com/nasa-nccs-hpda/eo-validation/actions/workflows/lint.yml/badge.svg" src="https://github.com/nasa-nccs-hpda/eo-validation/actions/workflows/lint.yml/badge.svg" /></a>
 <p><strong>Earth Observation Validation Tool for Individuals and Teams</strong></p>
 <ul class="simple">
@@ -109,12 +112,14 @@
 <li><p><a class="reference internal" href="#objectives">Objectives</a></p></li>
 <li><p><a class="reference internal" href="#installation">Installation</a></p></li>
 <li><p><a class="reference internal" href="#infrastructure">Infrastructure</a></p></li>
+<li><p><a class="reference internal" href="#examples">Examples</a></p></li>
+<li><p><a class="reference internal" href="#best-practices">Best Practices</a></p></li>
 <li><p><a class="reference internal" href="#contributing">Contributing</a></p></li>
 <li><p><a class="reference internal" href="#contributors">Contributors</a></p></li>
 <li><p><a class="reference internal" href="#references">References</a></p></li>
 </ul>
 <section id="objectives">
-<h2>Objectives<a class="headerlink" href="#objectives" title="Permalink to this heading"></a></h2>
+<h2>Objectives<a class="headerlink" href="#objectives" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Platform for collaborative validation of remotely sensed data</p></li>
 <li><p>Infrastructure to support multi-tenant visualization of moderate to very-high resolution data</p></li>
@@ -122,7 +127,7 @@
 </ul>
 </section>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>The following library is intended to be used to accelerate the development of validation products
 for remote sensing satellite imagery, or any other applications. eo-validation can be installed
 by itself, but instructions for installing the full environment are listed under the requirements
@@ -155,7 +160,7 @@ for more information.</p>
 </div>
 </section>
 <section id="infrastructure">
-<h2>Infrastructure<a class="headerlink" href="#infrastructure" title="Permalink to this heading"></a></h2>
+<h2>Infrastructure<a class="headerlink" href="#infrastructure" title="Link to this heading"></a></h2>
 <p>The eo-validation package is a set of Jupyter-based notebooks to manage and structure the validation of remote sensing data.
 The validation notebooks can be run Individually and/or via a Team of observers.</p>
 <p>The <strong>Individual</strong> option assumes that a single observer will be performing the entire validation. This will generate a single
@@ -166,8 +171,11 @@ the end output an aggregated database that includes the points of all the observ
 The main requirements are a <strong>data file</strong> in GeoTIFF format, and a <strong>mask file</strong> in GeoTIFF format. This data file
 will be used for visual interpretation. The mask file will be used to perform a stratified random sampling of points per
 mask class. If the mask file is not present, a completely random set of points will be generated for each data file.</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <section id="individual-validation-quickstart">
-<h3>Individual Validation Quickstart<a class="headerlink" href="#individual-validation-quickstart" title="Permalink to this heading"></a></h3>
+<h3>Individual Validation Quickstart<a class="headerlink" href="#individual-validation-quickstart" title="Link to this heading"></a></h3>
 <p>Download the Validation Dashboard</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">nasa</span><span class="o">-</span><span class="n">nccs</span><span class="o">-</span><span class="n">hpda</span><span class="o">/</span><span class="n">eo</span><span class="o">-</span><span class="n">validation</span><span class="o">/</span><span class="n">main</span><span class="o">/</span><span class="n">notebooks</span><span class="o">/</span><span class="n">ValidationDashboard</span><span class="o">.</span><span class="n">ipynb</span>
 </pre></div>
@@ -256,25 +264,133 @@ dashboard in order to successfully point to the necessary directories and paths.
 </ul>
 </section>
 <section id="teams-validation-quickstart">
-<h3>Teams’ Validation Quickstart<a class="headerlink" href="#teams-validation-quickstart" title="Permalink to this heading"></a></h3>
-<p>Place data sowhere
-Create general points
-Open notebook</p>
+<h3>Teams’ Validation Quickstart<a class="headerlink" href="#teams-validation-quickstart" title="Link to this heading"></a></h3>
+<p>The overall workflow is as follows:</p>
+<ol class="arabic simple">
+<li><p>Step 1. Upload the data to your system of choice.</p></li>
+<li><p>Step 2. Create a set of general points for use and locate them in a single directory.</p></li>
+<li><p>Step 3. Copy the Validation Dashboard notebook under a general directory so observers can choose the notebook.</p></li>
+<li><p>Step 4. Let the observers perform the validation and aggregate the points at the end of the validation period.</p></li>
+</ol>
+<p>This will allow you to have multiple observers per point for the possibility of more robust uncertainty metrics.</p>
 </section>
-<section id="teams-validation-example">
-<h3>Teams’ Validation Example<a class="headerlink" href="#teams-validation-example" title="Permalink to this heading"></a></h3>
-<p>Place data sowhere
-Create general points
-Open notebook</p>
+<section id="teams-validation-example-on-the-science-managed-cloud-environment">
+<h3>Teams’ Validation Example on the Science Managed Cloud Environment<a class="headerlink" href="#teams-validation-example-on-the-science-managed-cloud-environment" title="Link to this heading"></a></h3>
+<p>The following is an example workflow using the Science Managed Cloud Environment. Depending on your environment,
+you will need to modify some of these steps.</p>
+<ol class="arabic simple">
+<li><p>Step 1. Setup the working directories - Only done by the Team Administrator</p></li>
+</ol>
+<p>For this first step we will setup the working directories for your team. In this case we need 3 main directories.
+When using the Daskhub system, we have a directory called /home/jovyan, which is your personal home directory. Then
+we have the project directory where we will store the data and overall validation files.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>/efs/projects/&lt;project_name&gt;<span class="w"> </span>/efs/&lt;project_name&gt;
+</pre></div>
+</div>
+<p>Then, we will setup our data, labels, and original points directories:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>/efs/projects/&lt;project_name&gt;/data<span class="w"> </span>/efs/projects/&lt;project_name&gt;/labels<span class="w"> </span>/efs/projects/&lt;project_name&gt;/validation/original_points
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Step 2. Upload the data to your system of choice - Only done by the Team Administrator</p></li>
+</ol>
+<p>In this step you will need to upload the data you will be using in the validation exercise. In general this will require
+you to upload a pair of data (GeoTIFF satellite imagery) and labels (GeoTIFF single band label), and locate them in a
+general location. To upload the data to SMCE, you can use scp from a terminal within Daskhub, or manually uploading the
+imagery using Drag and Drop options.</p>
 </section>
+<section id="overall-validation-workflow">
+<h3>Overall Validation Workflow<a class="headerlink" href="#overall-validation-workflow" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><ol class="arabic simple">
+<li><p>Close unnecessary tabs in your browser. Make sure you have fast internet connection (&gt;5Mb/s).</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="2">
+<li><p>Login to SMCE daskhub via URL: <a class="reference external" href="https://daskhub.dsg.smce.nasa.gov">https://daskhub.dsg.smce.nasa.gov</a> (same user name (GMU NetID) and PW as in Nov 2022)</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="3">
+<li><p>Receive text and enter verification code (2 factor authentication – will be required each time you log in)</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="4">
+<li><p>Choose “Large Server” from list of resources</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="5">
+<li><p>Open terminal window by clicking on the “terminal” icon in the lower left of the launcher window.</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="6">
+<li><p>Change directory if not in correct folder: cd /efs/&lt;project_name&gt;/&lt;your_userID&gt; (you can use folders GUI on left)</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="7">
+<li><p>Double click on the Validation tool notebook</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="8">
+<li><p>Use the &gt;&gt; button to run the notebook from the beginning (RESTART Kernel?– click on Restart). Wait a few minutes for mapping window to open below (close any other tabs in your browser)</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="9">
+<li><p>A following window will open</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="10">
+<li><p>Click on tool icon (spanner) in upper right corner, then folder icon.</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="11">
+<li><p>Click / select/ highlight assigned image from Google list / click Select / new dialogue box click Apply. Select images assigned to you.</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="12">
+<li><p>Click “Apply” in dialogue box below, wait for validation points to be created and image to load.</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="13">
+<li><p>Set map window to full screen</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="14">
+<li><p>Click forward arrow to take you to the first marker / validation point, and automatically zoom in</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="15">
+<li><p>Make your selections, then click “Verified”</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="16">
+<li><p>Click   forward arrow to go to next point / marker</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="17">
+<li><p>You may indicate when you are not confident in your selection of cover type.</p></li>
+</ol>
+</li>
+</ol>
+</section>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Finishing and starting up again: If you have completed with one raster image press &gt;&gt; to Restart and select a new image.</p></li>
+</ul>
+<p>If you Do not restart, it multiple layers will be displayed, causing problems. The 2nd time or session you selects same image to
+continue working, you need to select image again they were working on  - all data / points will be automatically loaded. Just
+click on the right arrow and it will take you to the next point you need to work on.
+- End session: go to toolbar/file/hub control panel/ stop my server. You need to end the AWS session, otherwise the server stays
+active wasting money and project funding.</p>
 </section>
 <section id="contributing">
-<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading"></a></h2>
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>
 <p>Contributions are welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given.</p>
 <p>You can contribute in many ways:</p>
 <section id="report-bugs">
-<h3>Report Bugs<a class="headerlink" href="#report-bugs" title="Permalink to this heading"></a></h3>
+<h3>Report Bugs<a class="headerlink" href="#report-bugs" title="Link to this heading"></a></h3>
 <p>Report bugs at <a class="reference external" href="https://github.com/nasa-nccs-hpda/eo-validation/issues">https://github.com/nasa-nccs-hpda/eo-validation/issues</a>.</p>
 <p>If you are reporting a bug, please include:</p>
 <ul class="simple">
@@ -284,23 +400,23 @@ helps, and credit will always be given.</p>
 </ul>
 </section>
 <section id="fix-bugs">
-<h3>Fix Bugs<a class="headerlink" href="#fix-bugs" title="Permalink to this heading"></a></h3>
+<h3>Fix Bugs<a class="headerlink" href="#fix-bugs" title="Link to this heading"></a></h3>
 <p>Look through the GitHub issues for bugs. Anything tagged with “bug” and “help
 wanted” is open to whoever wants to implement it.</p>
 </section>
 <section id="implement-features">
-<h3>Implement Features<a class="headerlink" href="#implement-features" title="Permalink to this heading"></a></h3>
+<h3>Implement Features<a class="headerlink" href="#implement-features" title="Link to this heading"></a></h3>
 <p>Look through the GitHub issues for features. Anything tagged with “enhancement”
 and “help wanted” is open to whoever wants to implement it.</p>
 </section>
 <section id="write-documentation">
-<h3>Write Documentation<a class="headerlink" href="#write-documentation" title="Permalink to this heading"></a></h3>
+<h3>Write Documentation<a class="headerlink" href="#write-documentation" title="Link to this heading"></a></h3>
 <p>eo-validation could always use more documentation, whether as part of the
 official eo-validation docs, in docstrings, or even on the web in blog posts,
 articles, and such.</p>
 </section>
 <section id="submit-feedback">
-<h3>Submit Feedback<a class="headerlink" href="#submit-feedback" title="Permalink to this heading"></a></h3>
+<h3>Submit Feedback<a class="headerlink" href="#submit-feedback" title="Link to this heading"></a></h3>
 <p>The best way to send feedback is to file an issue at <a class="reference external" href="https://github.com/nasa-nccs-hpda/eo-validation/issues">https://github.com/nasa-nccs-hpda/eo-validation/issues</a>.</p>
 <p>If you are proposing a feature:</p>
 <ul class="simple">
@@ -312,14 +428,14 @@ are welcome :)</p></li>
 </section>
 </section>
 <section id="contributors">
-<h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this heading"></a></h2>
+<h2>Contributors<a class="headerlink" href="#contributors" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Jordan A. Caraballo-Vega, <a class="reference external" href="mailto:jordan&#46;a&#46;caraballo-vega&#37;&#52;&#48;nasa&#46;gov">jordan<span>&#46;</span>a<span>&#46;</span>caraballo-vega<span>&#64;</span>nasa<span>&#46;</span>gov</a></p></li>
 <li><p>Caleb S. Spradlin, <a class="reference external" href="mailto:caleb&#46;s&#46;spradlin&#37;&#52;&#48;nasa&#46;gov">caleb<span>&#46;</span>s<span>&#46;</span>spradlin<span>&#64;</span>nasa<span>&#46;</span>gov</a></p></li>
 </ul>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this heading"></a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
 <p><a class="reference external" href="https://github.com/opengeos/leafmap">leafmap</a></p>
 </section>
 </section>
