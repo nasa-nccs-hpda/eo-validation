@@ -40,7 +40,8 @@ The original implementation of this tool was implemented with the cloud-based Da
 in mind, but additional guidance and installation scripts are provided to support the portability
 of the tool on commodity-based and on-premises environments.
 
-**eo-validation** is available on `PyPI <https://pypi.org/project/eo-validation/>`__. To install **eo-validation**, run this command in your terminal:
+**eo-validation** is available on `PyPI <https://pypi.org/project/eo-validation/>`__.
+To install **eo-validation**, run this command in your terminal:
 
 .. code:: python
 
@@ -203,15 +204,20 @@ Teams' Validation Example on the Science Managed Cloud Environment
 The following is an example workflow using the Science Managed Cloud Environment. Depending on your environment,
 you will need to modify some of these steps.
 
-#. Setup the working directories - Only done by the Team Administrator
+If you have been notified that a tutorial environment is already generated for you, feel free to skip to step 3.
+
+#. Setup the working environment - Only done by the Team Administrator
 
 For this first step we will setup the working directories for your team. In this case we need 3 main directories.
 When using the Daskhub system, we have a directory called /home/jovyan, which is your personal home directory. Then
 we have the project directory where we will store the data and overall validation files.
 
+To setup this environment, pull the following notebook into your system and run each cell for it to automatically
+setup your Daskhub working environment.
+
 .. code:: bash
 
-  mkdir -p /efs/projects/<project_name> /efs/<project_name>
+  wget https://raw.githubusercontent.com/nasa-nccs-hpda/eo-validation/main/notebooks/ValidationEnvironmentSetup.ipynb
 
 Then, we will setup our data, labels, and original points directories:
 
@@ -219,12 +225,20 @@ Then, we will setup our data, labels, and original points directories:
 
   mkdir -p /efs/projects/<project_name>/data /efs/projects/<project_name>/labels /efs/projects/<project_name>/validation/original_points
 
-#. Step 2. Upload the data to your system of choice - Only done by the Team Administrator
+#. Upload the data to your system of choice - Only done by the Team Administrator
 
 In this step you will need to upload the data you will be using in the validation exercise. In general this will require
 you to upload a pair of data (GeoTIFF satellite imagery) and labels (GeoTIFF single band label), and locate them in a 
 general location. To upload the data to SMCE, you can use scp from a terminal within Daskhub, or manually uploading the
 imagery using Drag and Drop options.
+
+#. Start working on your environment
+
+In this step users can start working on their personal notebooks. These notebooks can be accessed by opening the 
+ValidationDashboard.ipynb file from your working directory. For example, if you are part of Dr. Peng group, you can
+access your personal tutorial notebook under /efs/Bin_UIUC/<your_username>/ValidationDashboard.ipynb.
+
+If you need additional help walking through the notebook, here is a short video on how to get started `YouTube <https://youtu.be/3tG7bQ-10ac>`__.
 
 Overall Validation Workflow
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -250,12 +264,12 @@ Overall Validation Workflow
 Best Practices
 ---------------
 
-- Finishing and starting up again: If you have completed with one raster image press >> to Restart and select a new image.
-If you Do not restart, it multiple layers will be displayed, causing problems. The 2nd time or session you selects same image to
-continue working, you need to select image again they were working on  - all data / points will be automatically loaded. Just 
-click on the right arrow and it will take you to the next point you need to work on.
-- End session: go to toolbar/file/hub control panel/ stop my server. You need to end the AWS session, otherwise the server stays
+#. End session: go to toolbar/file/hub control panel/ stop my server. You need to end the AWS session, otherwise the server stays
 active wasting money and project funding. 
+#. Finishing and starting up again: If you have completed with one raster image press >> to Restart and select a new image. If you Do 
+not restart, it multiple layers will be displayed, causing problems.
+#. If your session dies and you were working on an existing number of points, reload your session and reselect the file you were working
+on. The notebook will continue where it left. Just click on the right arrow and it will take you to the next point you need to work on.
 
 Contributing
 -------------
