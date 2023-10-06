@@ -15,6 +15,8 @@ eo-validation
 - `Objectives`_
 - `Installation`_
 - `Infrastructure`_
+- `Examples`_
+- `Best Practices`_
 - `Contributing`_
 - `Contributors`_
 - `References`_
@@ -38,7 +40,8 @@ The original implementation of this tool was implemented with the cloud-based Da
 in mind, but additional guidance and installation scripts are provided to support the portability
 of the tool on commodity-based and on-premises environments.
 
-**eo-validation** is available on `PyPI <https://pypi.org/project/eo-validation/>`__. To install **eo-validation**, run this command in your terminal:
+**eo-validation** is available on `PyPI <https://pypi.org/project/eo-validation/>`__.
+To install **eo-validation**, run this command in your terminal:
 
 .. code:: python
 
@@ -86,6 +89,9 @@ The core validation procedures followed by this notebook rely on the
 The main requirements are a **data file** in GeoTIFF format, and a **mask file** in GeoTIFF format. This data file
 will be used for visual interpretation. The mask file will be used to perform a stratified random sampling of points per
 mask class. If the mask file is not present, a completely random set of points will be generated for each data file.
+
+Examples
+--------------
 
 Individual Validation Quickstart
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -183,19 +189,90 @@ The arguments from the ValidationDashboard class are as follow:
 Teams' Validation Quickstart
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Place data sowhere
-Create general points
-Open notebook
+The overall workflow is as follows:
 
-Teams' Validation Example
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#. Upload the data to your system of choice.
+#. Create a set of general points for use and locate them in a single directory.
+#. Copy the Validation Dashboard notebook under a general directory so observers can choose the notebook.
+#. Let the observers perform the validation and aggregate the points at the end of the validation period.
 
-Place data sowhere
-Create general points
-Open notebook
+This will allow you to have multiple observers per point for the possibility of more robust uncertainty metrics.
+
+Teams' Validation Example on the Science Managed Cloud Environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following is an example workflow using the Science Managed Cloud Environment. Depending on your environment,
+you will need to modify some of these steps.
+
+If you have been notified that a tutorial environment is already generated for you, feel free to skip to step 3.
+
+#. Setup the working environment - Only done by the Team Administrator
+
+For this first step we will setup the working directories for your team. In this case we need 3 main directories.
+When using the Daskhub system, we have a directory called /home/jovyan, which is your personal home directory. Then
+we have the project directory where we will store the data and overall validation files.
+
+To setup this environment, pull the following notebook into your system and run each cell for it to automatically
+setup your Daskhub working environment.
+
+.. code:: bash
+
+  wget https://raw.githubusercontent.com/nasa-nccs-hpda/eo-validation/main/notebooks/ValidationEnvironmentSetup.ipynb
+
+Then, we will setup our data, labels, and original points directories:
+
+.. code:: bash
+
+  mkdir -p /efs/projects/<project_name>/data /efs/projects/<project_name>/labels /efs/projects/<project_name>/validation/original_points
+
+#. Upload the data to your system of choice - Only done by the Team Administrator
+
+In this step you will need to upload the data you will be using in the validation exercise. In general this will require
+you to upload a pair of data (GeoTIFF satellite imagery) and labels (GeoTIFF single band label), and locate them in a 
+general location. To upload the data to SMCE, you can use scp from a terminal within Daskhub, or manually uploading the
+imagery using Drag and Drop options.
+
+#. Start working on your environment
+
+In this step users can start working on their personal notebooks. These notebooks can be accessed by opening the 
+ValidationDashboard.ipynb file from your working directory. For example, if you are part of Dr. Peng group, you can
+access your personal tutorial notebook under /efs/Bin_UIUC/<your_username>/ValidationDashboard.ipynb.
+
+If you need additional help walking through the notebook, here is a short video on how to get started `YouTube <https://youtu.be/3tG7bQ-10ac>`__.
+
+Overall Validation Workflow
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#. Close unnecessary tabs in your browser. Make sure you have fast internet connection (>5Mb/s).
+#. Login to SMCE daskhub via URL: https://daskhub.dsg.smce.nasa.gov (same user name (GMU NetID) and PW as in Nov 2022) 
+#. Receive text and enter verification code (2 factor authentication – will be required each time you log in)
+#. Choose “Large Server” from list of resources
+#. Open terminal window by clicking on the “terminal” icon in the lower left of the launcher window.  
+#. Change directory if not in correct folder: cd /efs/<project_name>/<your_userID> (you can use folders GUI on left)
+#. Double click on the Validation tool notebook
+#. Use the >> button to run the notebook from the beginning (RESTART Kernel?– click on Restart). Wait a few minutes for mapping window to open below (close any other tabs in your browser) 
+#. A following window will open
+#. Click on tool icon (spanner) in upper right corner, then folder icon.
+#. Click / select/ highlight assigned image from Google list / click Select / new dialogue box click Apply. Select images assigned to you.
+#. Click “Apply” in dialogue box below, wait for validation points to be created and image to load.
+#. Set map window to full screen
+#. Click forward arrow to take you to the first marker / validation point, and automatically zoom in
+#. Make your selections, then click “Verified”
+#. Click forward arrow to go to next point / marker
+#. You may indicate when you are not confident in your selection of cover type.
+
+Best Practices
+---------------
+
+#. End session: go to toolbar/file/hub control panel/ stop my server. You need to end the AWS session, otherwise the server stays
+active wasting money and project funding. 
+#. Finishing and starting up again: If you have completed with one raster image press >> to Restart and select a new image. If you Do 
+not restart, it multiple layers will be displayed, causing problems.
+#. If your session dies and you were working on an existing number of points, reload your session and reselect the file you were working
+on. The notebook will continue where it left. Just click on the right arrow and it will take you to the next point you need to work on.
 
 Contributing
-------------
+-------------
 
 Contributions are welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given.
