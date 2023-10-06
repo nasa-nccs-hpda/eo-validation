@@ -300,7 +300,8 @@ class ValidationDashboard(ipyleaflet.Map):
             # Make sure expected accuracies match size of classes found
             if len(self.expected_accuracies) != raster_prediction['predicted'].max() + 1:
                 self.expected_accuracies = \
-                    [self.expected_accuracies[0]] * (raster_prediction['predicted'].max() + 1)
+                    [self.expected_accuracies[0]] * \
+                        (raster_prediction['predicted'].max() + 1)
 
             print("self.expected_accuracies", self.expected_accuracies)
             print("unique_counts", unique_counts)
@@ -336,8 +337,9 @@ class ValidationDashboard(ipyleaflet.Map):
             if unique_counts['n_point'].sum() < val_total_points:
                 unique_counts.at[0, 'n_point'] += \
                     val_total_points - unique_counts['n_point'].sum()
-            elif unique_counts['n_point'].sum() > val_total_points:                
-                unique_counts.at[unique_counts['n_point'].idxmax(), 'n_point'] -= \
+            elif unique_counts['n_point'].sum() > val_total_points:               
+                unique_counts.at[
+                    unique_counts['n_point'].idxmax(), 'n_point'] -= \
                     unique_counts['n_point'].sum() - val_total_points
 
             for class_id, row in unique_counts.iterrows():
@@ -362,8 +364,10 @@ class ValidationDashboard(ipyleaflet.Map):
             # Convert to dataframe and filter no-data
             raster_prediction = \
                 raster_prediction.squeeze().to_dataframe().reset_index()
+
+            # drop some unecessary columns
             raster_prediction = raster_prediction.drop(
-                ['band', 'spatial_ref'], axis=1)  # drop some unecessary columns
+                ['band', 'spatial_ref'], axis=1)
 
             # Only select appropiate values, remove no-data
             raster_prediction = raster_prediction[
@@ -373,7 +377,7 @@ class ValidationDashboard(ipyleaflet.Map):
             raster_prediction = raster_prediction.astype({'predicted': 'int'})
 
             # Generate random points (drop randomly from the dataset
-            raster_prediction = raster_prediction.sample(n = n_points)
+            raster_prediction = raster_prediction.sample(n=n_points)
 
         # Generate geometry dataframe
         geometry = gpd.points_from_xy(raster_prediction.x, raster_prediction.y)
@@ -400,15 +404,15 @@ class ValidationDashboard(ipyleaflet.Map):
             mask_filename = mask_filename[0]
         else:
             mask_filename = None
-        
+
         original_points_filename = os.path.join(
             self.points_dir, f'{Path(in_raster).stem}.gpkg')
-        
+
         # Extract output filename if None available and doing offline points
         if self.output_filename is None or offline:
             self.output_filename = os.path.join(
                 self.output_dir, f"{Path(in_raster).stem}.gpkg")
-            
+
         # Case #1: student is already working on the points
         if not gen_points or os.path.isfile(self.output_filename):
             validation_points = self.load_gpkg(self.output_filename)
@@ -515,7 +519,8 @@ class ValidationDashboard(ipyleaflet.Map):
                 cell = ipysheet.cell(index, 3, point['burnt'])
                 widgets.jslink((cell, 'value'), (radio_burn_widget, 'value'))
                 cell = ipysheet.cell(index, 4, point['confidence'])
-                widgets.jslink((cell, 'value'), (radio_confidence_widget, 'value'))
+                widgets.jslink(
+                    (cell, 'value'), (radio_confidence_widget, 'value'))
                 cell = ipysheet.cell(index, 5, verified_option)
                 widgets.jslink((cell, 'value'), (checked_widget, 'value'))
 
