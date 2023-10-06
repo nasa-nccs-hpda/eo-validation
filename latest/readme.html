@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>eo-validation &mdash; eo-validation 0.0.1 documentation</title>
+  <title>eo-validation &mdash; eo-validation 0.1.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/documentation_options.js?v=a58bc63e"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -36,7 +36,7 @@
             eo-validation
           </a>
               <div class="version">
-                0.0.1
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -278,11 +278,9 @@ dashboard in order to successfully point to the necessary directories and paths.
 <section id="teams-validation-example-on-the-science-managed-cloud-environment">
 <h3>Teams’ Validation Example on the Science Managed Cloud Environment<a class="headerlink" href="#teams-validation-example-on-the-science-managed-cloud-environment" title="Link to this heading"></a></h3>
 <p>The following is an example workflow using the Science Managed Cloud Environment. Depending on your environment,
-you will need to modify some of these steps.</p>
-<p>If you have been notified that a tutorial environment is already generated for you, feel free to skip to step 3.</p>
-<ol class="arabic simple">
-<li><p>Setup the working environment - Only done by the Team Administrator</p></li>
-</ol>
+you will need to modify some of these steps. If you have been notified that a tutorial environment is already
+generated for you, feel free to skip to step 3.</p>
+<p><strong>1. Setup the working environment - Only done by the Team Administrator</strong></p>
 <p>For this first step we will setup the working directories for your team. In this case we need 3 main directories.
 When using the Daskhub system, we have a directory called /home/jovyan, which is your personal home directory. Then
 we have the project directory where we will store the data and overall validation files.</p>
@@ -291,24 +289,17 @@ setup your Daskhub working environment.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://raw.githubusercontent.com/nasa-nccs-hpda/eo-validation/main/notebooks/ValidationEnvironmentSetup.ipynb
 </pre></div>
 </div>
-<p>Then, we will setup our data, labels, and original points directories:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>/efs/projects/&lt;project_name&gt;/data<span class="w"> </span>/efs/projects/&lt;project_name&gt;/labels<span class="w"> </span>/efs/projects/&lt;project_name&gt;/validation/original_points
-</pre></div>
-</div>
-<ol class="arabic simple">
-<li><p>Upload the data to your system of choice - Only done by the Team Administrator</p></li>
-</ol>
+<p><strong>2. Upload the data to your system of choice - Only done by the Team Administrator</strong></p>
 <p>In this step you will need to upload the data you will be using in the validation exercise. In general this will require
 you to upload a pair of data (GeoTIFF satellite imagery) and labels (GeoTIFF single band label), and locate them in a
 general location. To upload the data to SMCE, you can use scp from a terminal within Daskhub, or manually uploading the
 imagery using Drag and Drop options.</p>
-<ol class="arabic simple">
-<li><p>Start working on your environment</p></li>
-</ol>
+<p><strong>3. Start working on your environment</strong></p>
 <p>In this step users can start working on their personal notebooks. These notebooks can be accessed by opening the
 ValidationDashboard.ipynb file from your working directory. For example, if you are part of Dr. Peng group, you can
 access your personal tutorial notebook under /efs/Bin_UIUC/&lt;your_username&gt;/ValidationDashboard.ipynb.</p>
 <p>If you need additional help walking through the notebook, here is a short video on how to get started <a class="reference external" href="https://youtu.be/3tG7bQ-10ac">YouTube</a>.</p>
+<a class="reference external image-reference" href="https://www.youtube.com/watch?v=3tG7bQ-10ac"><img alt="eo-validation demo" src="https://img.youtube.com/vi/3tG7bQ-10ac/maxresdefault.jpg" /></a>
 </section>
 <section id="overall-validation-workflow">
 <h3>Overall Validation Workflow<a class="headerlink" href="#overall-validation-workflow" title="Link to this heading"></a></h3>
