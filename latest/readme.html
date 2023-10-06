@@ -135,7 +135,8 @@ directory so projects, examples, and notebooks can be run.</p>
 <p>The original implementation of this tool was implemented with the cloud-based DaskHub environment
 in mind, but additional guidance and installation scripts are provided to support the portability
 of the tool on commodity-based and on-premises environments.</p>
-<p><strong>eo-validation</strong> is available on <a class="reference external" href="https://pypi.org/project/eo-validation/">PyPI</a>. To install <strong>eo-validation</strong>, run this command in your terminal:</p>
+<p><strong>eo-validation</strong> is available on <a class="reference external" href="https://pypi.org/project/eo-validation/">PyPI</a>.
+To install <strong>eo-validation</strong>, run this command in your terminal:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">eo</span><span class="o">-</span><span class="n">validation</span>
 </pre></div>
 </div>
@@ -278,13 +279,16 @@ dashboard in order to successfully point to the necessary directories and paths.
 <h3>Teams’ Validation Example on the Science Managed Cloud Environment<a class="headerlink" href="#teams-validation-example-on-the-science-managed-cloud-environment" title="Link to this heading"></a></h3>
 <p>The following is an example workflow using the Science Managed Cloud Environment. Depending on your environment,
 you will need to modify some of these steps.</p>
+<p>If you have been notified that a tutorial environment is already generated for you, feel free to skip to step 3.</p>
 <ol class="arabic simple">
-<li><p>Setup the working directories - Only done by the Team Administrator</p></li>
+<li><p>Setup the working environment - Only done by the Team Administrator</p></li>
 </ol>
 <p>For this first step we will setup the working directories for your team. In this case we need 3 main directories.
 When using the Daskhub system, we have a directory called /home/jovyan, which is your personal home directory. Then
 we have the project directory where we will store the data and overall validation files.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>/efs/projects/&lt;project_name&gt;<span class="w"> </span>/efs/&lt;project_name&gt;
+<p>To setup this environment, pull the following notebook into your system and run each cell for it to automatically
+setup your Daskhub working environment.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://raw.githubusercontent.com/nasa-nccs-hpda/eo-validation/main/notebooks/ValidationEnvironmentSetup.ipynb
 </pre></div>
 </div>
 <p>Then, we will setup our data, labels, and original points directories:</p>
@@ -292,12 +296,19 @@ we have the project directory where we will store the data and overall validatio
 </pre></div>
 </div>
 <ol class="arabic simple">
-<li><p>Step 2. Upload the data to your system of choice - Only done by the Team Administrator</p></li>
+<li><p>Upload the data to your system of choice - Only done by the Team Administrator</p></li>
 </ol>
 <p>In this step you will need to upload the data you will be using in the validation exercise. In general this will require
 you to upload a pair of data (GeoTIFF satellite imagery) and labels (GeoTIFF single band label), and locate them in a
 general location. To upload the data to SMCE, you can use scp from a terminal within Daskhub, or manually uploading the
 imagery using Drag and Drop options.</p>
+<ol class="arabic simple">
+<li><p>Start working on your environment</p></li>
+</ol>
+<p>In this step users can start working on their personal notebooks. These notebooks can be accessed by opening the
+ValidationDashboard.ipynb file from your working directory. For example, if you are part of Dr. Peng group, you can
+access your personal tutorial notebook under /efs/Bin_UIUC/&lt;your_username&gt;/ValidationDashboard.ipynb.</p>
+<p>If you need additional help walking through the notebook, here is a short video on how to get started <a class="reference external" href="https://youtu.be/3tG7bQ-10ac">YouTube</a>.</p>
 </section>
 <section id="overall-validation-workflow">
 <h3>Overall Validation Workflow<a class="headerlink" href="#overall-validation-workflow" title="Link to this heading"></a></h3>
@@ -324,14 +335,12 @@ imagery using Drag and Drop options.</p>
 </section>
 <section id="best-practices">
 <h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p>Finishing and starting up again: If you have completed with one raster image press &gt;&gt; to Restart and select a new image.</p></li>
-</ul>
-<p>If you Do not restart, it multiple layers will be displayed, causing problems. The 2nd time or session you selects same image to
-continue working, you need to select image again they were working on  - all data / points will be automatically loaded. Just
-click on the right arrow and it will take you to the next point you need to work on.
-- End session: go to toolbar/file/hub control panel/ stop my server. You need to end the AWS session, otherwise the server stays
-active wasting money and project funding.</p>
+<p>#. End session: go to toolbar/file/hub control panel/ stop my server. You need to end the AWS session, otherwise the server stays
+active wasting money and project funding.
+#. Finishing and starting up again: If you have completed with one raster image press &gt;&gt; to Restart and select a new image. If you Do
+not restart, it multiple layers will be displayed, causing problems.
+#. If your session dies and you were working on an existing number of points, reload your session and reselect the file you were working
+on. The notebook will continue where it left. Just click on the right arrow and it will take you to the next point you need to work on.</p>
 </section>
 <section id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>
