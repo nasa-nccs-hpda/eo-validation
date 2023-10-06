@@ -202,11 +202,10 @@ Teams' Validation Example on the Science Managed Cloud Environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following is an example workflow using the Science Managed Cloud Environment. Depending on your environment,
-you will need to modify some of these steps.
+you will need to modify some of these steps. If you have been notified that a tutorial environment is already 
+generated for you, feel free to skip to step 3.
 
-If you have been notified that a tutorial environment is already generated for you, feel free to skip to step 3.
-
-#. Setup the working environment - Only done by the Team Administrator
+**1. Setup the working environment - Only done by the Team Administrator**
 
 For this first step we will setup the working directories for your team. In this case we need 3 main directories.
 When using the Daskhub system, we have a directory called /home/jovyan, which is your personal home directory. Then
@@ -219,26 +218,25 @@ setup your Daskhub working environment.
 
   wget https://raw.githubusercontent.com/nasa-nccs-hpda/eo-validation/main/notebooks/ValidationEnvironmentSetup.ipynb
 
-Then, we will setup our data, labels, and original points directories:
 
-.. code:: bash
-
-  mkdir -p /efs/projects/<project_name>/data /efs/projects/<project_name>/labels /efs/projects/<project_name>/validation/original_points
-
-#. Upload the data to your system of choice - Only done by the Team Administrator
+**2. Upload the data to your system of choice - Only done by the Team Administrator**
 
 In this step you will need to upload the data you will be using in the validation exercise. In general this will require
 you to upload a pair of data (GeoTIFF satellite imagery) and labels (GeoTIFF single band label), and locate them in a 
 general location. To upload the data to SMCE, you can use scp from a terminal within Daskhub, or manually uploading the
 imagery using Drag and Drop options.
 
-#. Start working on your environment
+**3. Start working on your environment**
 
 In this step users can start working on their personal notebooks. These notebooks can be accessed by opening the 
 ValidationDashboard.ipynb file from your working directory. For example, if you are part of Dr. Peng group, you can
 access your personal tutorial notebook under /efs/Bin_UIUC/<your_username>/ValidationDashboard.ipynb.
 
 If you need additional help walking through the notebook, here is a short video on how to get started `YouTube <https://youtu.be/3tG7bQ-10ac>`__.
+
+.. image:: https://img.youtube.com/vi/3tG7bQ-10ac/maxresdefault.jpg
+    :alt: eo-validation demo
+    :target: https://www.youtube.com/watch?v=3tG7bQ-10ac
 
 Overall Validation Workflow
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
