@@ -101,10 +101,10 @@ class ValidationDashboard(ipyleaflet.Map):
 
         # Retrieve hostname
         self.hostname = socket.gethostname()
-        
+
         # Retrieve username
         self.username = pwd.getpwuid(os.getuid())[0]
-        
+
         # if the username is from a Daskhub instance with jovyan
         if self.username == 'jovyan':
             self.username = self.hostname.split('-')[-1]
@@ -256,11 +256,11 @@ class ValidationDashboard(ipyleaflet.Map):
         self.zoom = raster_client.default_zoom  # zoom to raster center
 
     def generate_points(
-            self,
-            raster_filename: str,
-            mask_filename: str,
-            n_points: int = None
-        ):
+                self,
+                raster_filename: str,
+                mask_filename: str,
+                n_points: int = None
+            ):
         """
         Generate points.
         """
@@ -276,8 +276,10 @@ class ValidationDashboard(ipyleaflet.Map):
             # Convert to dataframe and filter no-data
             raster_prediction = \
                 raster_prediction.squeeze().to_dataframe().reset_index()
+
+            # drop some unecessary columns
             raster_prediction = raster_prediction.drop(
-                ['band', 'spatial_ref'], axis=1)  # drop some unecessary columns
+                ['band', 'spatial_ref'], axis=1)
 
             # Only select appropiate values, remove no-data
             raster_prediction = raster_prediction[
@@ -287,13 +289,14 @@ class ValidationDashboard(ipyleaflet.Map):
 
             # Make sure classes start from 1, substract 1 if not
             if raster_prediction['predicted'].min() > 0:
-                raster_prediction['predicted'] = raster_prediction['predicted'] - 1
+                raster_prediction['predicted'] = \
+                    raster_prediction['predicted'] - 1
 
             # Convert mask to int
             raster_prediction = raster_prediction.astype({'predicted': 'int'})
             unique_counts = raster_prediction['predicted'].value_counts()
             original_shape = raster_prediction.shape[0]
-            
+
             # Make sure expected accuracies match size of classes found
             if len(self.expected_accuracies) != raster_prediction['predicted'].max() + 1:
                 self.expected_accuracies = \
@@ -302,7 +305,7 @@ class ValidationDashboard(ipyleaflet.Map):
             print("self.expected_accuracies", self.expected_accuracies)
             print("unique_counts", unique_counts)
             print("unique_counts.shape", unique_counts.shape)
-            
+
             percentage_counts, standard_deviation = [], []
             for class_id, class_count in unique_counts.iteritems():
                 percentage_counts.append(class_count / original_shape)
@@ -333,11 +336,7 @@ class ValidationDashboard(ipyleaflet.Map):
             if unique_counts['n_point'].sum() < val_total_points:
                 unique_counts.at[0, 'n_point'] += \
                     val_total_points - unique_counts['n_point'].sum()
-            elif unique_counts['n_point'].sum() > val_total_points:
-                
-                # getting negative from here, lets take the biggest number
-                # print("AHHHHHHH", unique_counts['n_point'].idxmax())
-                
+            elif unique_counts['n_point'].sum() > val_total_points:                
                 unique_counts.at[unique_counts['n_point'].idxmax(), 'n_point'] -= \
                     unique_counts['n_point'].sum() - val_total_points
 
@@ -349,17 +348,17 @@ class ValidationDashboard(ipyleaflet.Map):
                             n=int(row['predicted'] - row['n_point']),
                             random_state=24).index
                 )
-        
+
         # we do not have any mask filename
         else:
-            
+
             # read prediction raster
             raster_prediction = rxr.open_rasterio(
                 raster_filename, chunks=self.chunks)[0, :, :]
             raster_prediction.name = "predicted"
             raster_prediction = raster_prediction.rio.reproject("EPSG:4326")
             self.raster_crs = raster_prediction.rio.crs
-            
+
             # Convert to dataframe and filter no-data
             raster_prediction = \
                 raster_prediction.squeeze().to_dataframe().reset_index()
@@ -386,25 +385,21 @@ class ValidationDashboard(ipyleaflet.Map):
         return raster_prediction
 
     def add_markers(
-            self,
-            in_raster: str,
-            gen_points: bool = True,
-            n_points: int = None,
-            offline: bool = False
-        ):
+                self,
+                in_raster: str,
+                gen_points: bool = True,
+                n_points: int = None,
+                offline: bool = False
+            ):
 
         # Extract label filename from data filename
         mask_filename = glob(
             os.path.join(self.mask_dir, f'{Path(in_raster).stem}*.tif'))
-        
-        print("GOING INSIDE GLOB", os.path.join(self.mask_dir, f'{Path(in_raster).stem}*.tif'))
-        print("MASK_FILENAME GLOB", mask_filename)
 
         if len(mask_filename) > 0:
             mask_filename = mask_filename[0]
         else:
             mask_filename = None
-        print("MASK_FILENAME", mask_filename)
         
         original_points_filename = os.path.join(
             self.points_dir, f'{Path(in_raster).stem}.gpkg')
