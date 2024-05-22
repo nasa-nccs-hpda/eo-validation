@@ -176,6 +176,12 @@ class ValidationDashboard(ipyleaflet.Map):
         else:
             self.mask_classes = kwargs['mask_classes']
 
+        # Define default mask classes
+        if "default_class" not in kwargs:
+            self.default_class = self.validation_classes[0]
+        else:
+            self.default_class = kwargs['default_class']
+        
         # Define pre-generated validations points
         if "points_dir" not in kwargs:
             self.points_dir = os.path.join(
@@ -303,9 +309,9 @@ class ValidationDashboard(ipyleaflet.Map):
                     [self.expected_accuracies[0]] * \
                         (raster_prediction['predicted'].max() + 1)
 
-            print("self.expected_accuracies", self.expected_accuracies)
-            print("unique_counts", unique_counts)
-            print("unique_counts.shape", unique_counts.shape)
+            # print("self.expected_accuracies", self.expected_accuracies)
+            # print("unique_counts", unique_counts)
+            # print("unique_counts.shape", unique_counts.shape)
 
             percentage_counts, standard_deviation = [], []
             for class_id, class_count in unique_counts.iteritems():
@@ -343,7 +349,7 @@ class ValidationDashboard(ipyleaflet.Map):
                     unique_counts['n_point'].sum() - val_total_points
 
             for class_id, row in unique_counts.iterrows():
-                print("last", class_id, row)
+                # print("last", class_id, row)
                 raster_prediction = raster_prediction.drop(
                     raster_prediction[
                         raster_prediction['predicted'] == class_id].sample(
@@ -429,7 +435,7 @@ class ValidationDashboard(ipyleaflet.Map):
                 in_raster, mask_filename, n_points)
             validation_points = validation_points.drop(
                 ['predicted'], axis=1).to_crs(4326)
-            validation_points['operator'] = 'other'
+            validation_points['operator'] = self.default_class
             validation_points['burnt'] = 0
             validation_points['confidence'] = 1
             validation_points['verified'] = 'false'
