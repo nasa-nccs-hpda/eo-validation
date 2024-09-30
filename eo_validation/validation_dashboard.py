@@ -1,5 +1,6 @@
 import os
 import pwd
+import copy
 import math
 import socket
 import ipysheet
@@ -8,7 +9,13 @@ import numpy as np
 import geopandas as gpd
 import rioxarray as rxr
 import ipywidgets as widgets
-import whiteboxgui.whiteboxgui as wbt
+
+try:
+    import whiteboxgui.whiteboxgui as wbt
+    whitebox_imported = True
+except FileNotFoundError:
+    whitebox_imported = False
+    
 
 from glob import glob
 from pathlib import Path
@@ -24,8 +31,14 @@ from ipyleaflet import (
     basemaps,
     AwesomeIcon,
     MarkerCluster,
-    WidgetControl
+    WidgetControl,
+    Polygon,
+    GeoData,
+    TileLayer,
+    Popup
 )
+from shapely.geometry import shape
+
 
 if os.getenv("JUPYTERHUB_SERVICE_PREFIX") is not None:
     os.environ['LOCALTILESERVER_CLIENT_PREFIX'] = \
@@ -83,7 +96,7 @@ class ValidationDashboard(ipyleaflet.Map):
         # Define basemap options
         if "basemap" not in kwargs:
             kwargs["basemap"] = basemaps.Esri.WorldImagery
-
+            
         super().__init__(**kwargs)
 
         # Define the height of the layout
@@ -132,6 +145,7 @@ class ValidationDashboard(ipyleaflet.Map):
             self.output_dir = kwargs['output_dir']
 
         # Create output_dir
+        self.output_dir = os.path.join(self.output_dir, self.username)
         os.makedirs(self.output_dir, exist_ok=True)
 
         # Cleanup data_dir and mask_dir variables
@@ -195,7 +209,28 @@ class ValidationDashboard(ipyleaflet.Map):
             self.gen_points = True
         else:
             self.gen_points = kwargs['gen_points']
+            
+        # Define if we have a validation database given
+        # Here we are basically overriding the gen_points option if we already
+        # have some of the data, the classes are part of this process as well
+        if "validation_points_filename" not in kwargs:
+            self.validation_points_filename = None
+        else:
+            self.validation_points_filename = kwargs['validation_points_filename']
+            self.gen_points = False
 
+        # TODO: split points by column
+        if "filter_points_by" not in kwargs:
+            self.filter_points_by = None
+        else:
+            self.filter_points_by = kwargs['filter_points_by']
+        
+        # polygon or point for the marker
+        if "marker_type" not in kwargs:
+            self.marker_type = 'point'
+        else:
+            self.marker_type = kwargs['marker_type']
+            
         # Define if validation points need to be generated
         if "n_points" not in kwargs:
             self.n_points = 200
@@ -224,6 +259,12 @@ class ValidationDashboard(ipyleaflet.Map):
         self._validation_sheet = None
         self._markers_dict = dict()
         self._marker_counter = -1
+        
+        # Adding default Google Basemap
+        google_satellite_basemap = TileLayer(
+            url='https://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+            name='Google Satellite', max_zoom=80)
+        self.add_layer(google_satellite_basemap)
 
         # Start main toolbar
         self._main_toolbar()
@@ -309,10 +350,6 @@ class ValidationDashboard(ipyleaflet.Map):
                     [self.expected_accuracies[0]] * \
                         (raster_prediction['predicted'].max() + 1)
 
-            # print("self.expected_accuracies", self.expected_accuracies)
-            # print("unique_counts", unique_counts)
-            # print("unique_counts.shape", unique_counts.shape)
-
             percentage_counts, standard_deviation = [], []
             for class_id, class_count in unique_counts.iteritems():
                 percentage_counts.append(class_count / original_shape)
@@ -349,7 +386,6 @@ class ValidationDashboard(ipyleaflet.Map):
                     unique_counts['n_point'].sum() - val_total_points
 
             for class_id, row in unique_counts.iterrows():
-                # print("last", class_id, row)
                 raster_prediction = raster_prediction.drop(
                     raster_prediction[
                         raster_prediction['predicted'] == class_id].sample(
@@ -394,6 +430,14 @@ class ValidationDashboard(ipyleaflet.Map):
 
         return raster_prediction
 
+    def calculate_centroid(self, polygon_coordinates, geom_type):
+        polygon = shape({
+            "type": geom_type,
+            "coordinates": polygon_coordinates
+        })
+        centroid = polygon.centroid
+        return centroid.y, centroid.x  # Return as (lat, lon)
+    
     def add_markers(
                 self,
                 in_raster: str,
@@ -564,6 +608,200 @@ class ValidationDashboard(ipyleaflet.Map):
 
         return
 
+    def add_polygon_markers(
+                self,
+                in_filename: str
+            ):
+
+        # Extract output filename if None available and doing offline points
+        if self.output_filename is None:
+            self.output_filename = os.path.join(
+                self.output_dir, f"{Path(in_filename).stem}.gpkg")
+
+        # Case #1: student is already working on the points
+        if os.path.isfile(self.output_filename):
+            validation_points = self.load_gpkg(self.output_filename)
+            validation_points = validation_points.to_crs(epsg=4326)
+        
+        # Case #2: points have already been generated for everyone
+        elif os.path.isfile(in_filename):
+            
+            validation_points = self.load_gpkg(in_filename)
+            validation_points = validation_points.to_crs(epsg=4326)
+            
+            validation_points['operator'] = self.default_class
+            validation_points['burnt'] = 0
+            validation_points['confidence'] = 1
+            validation_points['verified'] = False #'false'
+
+        # Create ipysheet object
+        self._validation_sheet = ipysheet.sheet(
+            ipysheet.from_dataframe(
+                validation_points.to_crs(4326).drop(['geometry'], axis=1)))
+        widgets.Dropdown.value.tag(sync=True)
+        
+        # Adding geodatalayer
+        self.geo_data_layer = GeoData(
+            geo_dataframe=validation_points,
+            style={'color': 'black', 'fillColor': 'red'},
+            hover_style={'fillColor': 'white', 'fillOpacity': 0},
+            name = 'Validation'
+        )
+        
+        if self.filter_points_by is not None:
+            validation_points = validation_points[
+                validation_points['Group'] == self.filter_points_by]
+        
+        self._markers_dict = dict.fromkeys(
+            list(zip(validation_points.y.astype(float),
+                     validation_points.x.astype(float))), validation_points.Group)
+        
+        self.geo_data_layer.on_click(self.on_click_polygon_object)
+        self.add_layer(self.geo_data_layer)
+        self._geo_data = self.geo_data_layer.data
+
+        return
+    
+    def create_property_widgets(self, properties):
+        """Dynamically create widgets for each property."""
+
+        widgets_list = []
+
+        # get property items for each marker
+        property_items = dict(properties.items())
+
+        # adding all properties
+        if property_items['verified'] == 'false' or not property_items['verified']:
+            verified_option = False
+        else:
+            verified_option = True
+
+        radio_check_widget = widgets.RadioButtons(
+            options=self.validation_classes,
+            value=property_items['operator'],
+            layout={'width': 'max-content'},
+            description='Validation:',
+            disabled=False
+        )
+        radio_check_widget._property_key = 'operator'
+
+        radio_burn_widget = widgets.RadioButtons(
+            options=[('not-burnt', 0), ('burnt', 1)],
+            value=property_items['burnt'],
+            layout={'width': 'max-content'},
+            description='Burnt:',
+            disabled=False
+        )
+        radio_burn_widget._property_key = 'burnt'
+
+        radio_confidence_widget = widgets.RadioButtons(
+            options=[
+                ('high-confidence', 1),
+                ('medium-confidence', 2),
+                ('low-confidence', 3)],
+            value=property_items['confidence'],
+            layout={'width': 'max-content'},
+            description='Confidence:',
+            disabled=False
+        )
+        radio_confidence_widget._property_key = 'confidence'
+
+        point_id_widget = widgets.IntText(
+            value=property_items['ID'],
+            description='ID:',
+            disabled=True
+        )
+        point_id_widget._property_key = 'ID'
+
+        checked_widget = widgets.Checkbox(
+            value=verified_option,
+            description='Verified:',
+            disabled=False
+        )
+        checked_widget._property_key = 'verified'
+
+        #cell = ipysheet.cell(property_items['ID'], 2, property_items['operator'])
+        #widgets.jslink((cell, 'value'), (radio_check_widget, 'value'))
+        #cell = ipysheet.cell(property_items['ID'], 3, property_items['burnt'])
+        #widgets.jslink((cell, 'value'), (radio_burn_widget, 'value'))
+        #cell = ipysheet.cell(property_items['ID'], 4, property_items['confidence'])
+        #widgets.jslink(
+        #    (cell, 'value'), (radio_confidence_widget, 'value'))
+        #cell = ipysheet.cell(property_items['ID'], 5, verified_option)
+        #widgets.jslink((cell, 'value'), (checked_widget, 'value'))
+
+        popup = [
+            point_id_widget,
+            radio_check_widget,
+            radio_burn_widget,
+            radio_confidence_widget,
+            checked_widget
+        ]
+
+        return popup
+    
+    def on_click_polygon_object(self, event, feature, **kwargs):
+        # Dynamically create input widgets for each property
+        property_widgets = self.create_property_widgets(feature['properties'])
+        save_button = widgets.Button(description="Save")#, layout=layout)
+        geom_type = feature['geometry']['type']
+        centroid = self.calculate_centroid(feature['geometry']['coordinates'], geom_type)
+
+        box_layout = widgets.Layout(display='flex',
+                        flex_flow='column',
+                        align_items='center',)
+                        #width='50%')
+        
+        # Create and open the popup
+        popup_content = widgets.VBox(
+            property_widgets + [save_button], layout=box_layout)
+
+        popup = Popup(
+            location=centroid,
+            child=popup_content,
+            close_button=True,
+            auto_close=False,
+            close_on_escape_key=True,
+            min_width=320#int(widget_width[:-2]) + 5,
+        )
+
+        self.add_layer(popup)
+
+        def save_changes(_):
+
+            original_data = copy.deepcopy(self.geo_data_layer.data)
+            original_feature = copy.deepcopy(feature)
+            # Update the properties with the new values
+            for widget in property_widgets:
+                feature['properties'][widget._property_key] = widget.value
+
+            for i, f in enumerate(original_data['features']):
+                if f == original_feature:
+                    original_data['features'][i] = feature
+                    break
+
+            # Update the GeoJSON layer to reflect the changes
+            self.geo_data_layer.data = original_data
+            self._geo_data = original_data
+            
+            # updating the information with new data
+            self.geo_data_layer.geo_dataframe.loc[
+                self.geo_data_layer.geo_dataframe['ID'] \
+                    == feature['properties']['ID'], \
+                feature['properties'].keys()] = feature['properties'].values()
+            
+            # saving output
+            self.geo_data_layer.geo_dataframe.to_file(
+                self.output_filename, layer='validation', driver="GPKG")
+
+            self.remove_layer(popup)  # Close the popup by removing it from the map
+            
+            self.center = tuple(
+                list(self._markers_dict)[self._marker_counter])
+            self.zoom = self.default_zoom
+
+        save_button.on_click(save_changes)
+    
     def save_gpkg(self, df, output_filename, layer="validation"):
         """
         Save gpkg.
@@ -578,12 +816,24 @@ class ValidationDashboard(ipyleaflet.Map):
         """
         Load gpkg.
         """
-        gdf = gpd.read_file(input_filename).drop(['index'], axis=1)
+        # read file and drop index from dataframe
+        gdf = gpd.read_file(input_filename).drop(
+            ['index'], axis=1, errors='ignore')
+        
+        # save the raster/dataframe crs
         self.raster_crs = gdf.crs
+        
+        # check if the verified column exists, if not, create it
+        if 'verified' not in gdf.columns:
+            gdf['verified'] = False
+        
+        # get the points that have been verified if any
         self._marker_counter = gdf[
             'verified'][gdf['verified'] == True].last_valid_index()
+
         if self._marker_counter is None:
             self._marker_counter = -1
+            
         return gdf
 
     def _main_toolbar(self):
@@ -753,7 +1003,7 @@ class ValidationDashboard(ipyleaflet.Map):
 
                 elif b.icon == "gears":
 
-                    if hasattr(self, "whitebox") and self.whitebox is not None:
+                    if hasattr(self, "whitebox") and self.whitebox is not None and whitebox_imported:
                         if self.whitebox in self.controls:
                             self.remove_control(self.whitebox)
 
@@ -791,3 +1041,19 @@ class ValidationDashboard(ipyleaflet.Map):
             for j in range(cols):
                 tool = grid[i, j]
                 tool.on_click(tool_click)
+
+        # If the validation database is given, we go straight to
+        # load the points into the validation map.
+        if self.validation_points_filename is not None and self.marker_type == 'polygon':
+            
+            self.add_polygon_markers(self.validation_points_filename)
+            
+            # if the validation points from the existing user
+            # exist, load those
+            
+            
+            # if this is the first time the user is working on this,
+            # add the markers directly from this filename
+            
+        # TODO: in a future release do the same from a point dataset
+        # if self.validation_points_filename is not None and marker_type == 'point':
