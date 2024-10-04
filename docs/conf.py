@@ -3,7 +3,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath('..'))
 
-import eo_validation
+import eo_validation  # noqa: E402
 
 project = 'eo-validation'
 copyright = '2023, Jordan A. Caraballo-Vega'
