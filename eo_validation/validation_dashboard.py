@@ -785,9 +785,9 @@ class ValidationDashboard(ipyleaflet.Map):
         return popup
 
     def on_click_polygon_object(self, event, feature, **kwargs):
-        
+
         # get current time
-        self._current_time = time.time() 
+        self._current_time = time.time()
         self._feature = feature
 
         self._feature['properties'] = self.geo_data_layer.geo_dataframe.loc[
@@ -831,7 +831,8 @@ class ValidationDashboard(ipyleaflet.Map):
             original_feature = copy.deepcopy(self._feature)
             # Update the properties with the new values
             for widget in self.property_widgets:
-                self._feature['properties'][widget._property_key] = widget.value
+                self._feature['properties'][widget._property_key] = \
+                    widget.value
 
             for i, f in enumerate(original_data['features']):
                 if f == original_feature:
@@ -846,7 +847,8 @@ class ValidationDashboard(ipyleaflet.Map):
             self.geo_data_layer.geo_dataframe.loc[
                 self.geo_data_layer.geo_dataframe['ID']
                 == self._feature['properties']['ID'],
-                self._feature['properties'].keys()] = self._feature['properties'].values()
+                self._feature['properties'].keys()] = \
+                    self._feature['properties'].values()
 
             # saving output
             self.geo_data_layer.geo_dataframe.to_file(
