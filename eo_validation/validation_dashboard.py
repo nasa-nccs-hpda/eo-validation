@@ -2,10 +2,12 @@ import os
 import pwd
 import copy
 import math
+import time
 import socket
 import ipysheet
 import ipyleaflet
 import numpy as np
+import pandas as pd
 import geopandas as gpd
 import rioxarray as rxr
 import ipywidgets as widgets
@@ -37,6 +39,7 @@ from ipyleaflet import (
     Popup
 )
 from shapely.geometry import shape
+from eo_validation.async_write import AsyncWriteGDF
 
 
 if os.getenv("JUPYTERHUB_SERVICE_PREFIX") is not None:
@@ -259,6 +262,12 @@ class ValidationDashboard(ipyleaflet.Map):
         self._validation_sheet = None
         self._markers_dict = dict()
         self._marker_counter = -1
+
+        self._current_marker_id = None
+        self._current_time = None
+        self._seconds_per_point = None
+        
+        self.async_writer = AsyncWriteGDF()
 
         # Adding default Google Basemap
         google_satellite_basemap = TileLayer(
@@ -484,6 +493,8 @@ class ValidationDashboard(ipyleaflet.Map):
             validation_points['burnt'] = 0
             validation_points['confidence'] = 1
             validation_points['verified'] = 'false'
+            validation_points['date'] = None
+            validation_points['seconds_taken'] = None
 
         # Create ipysheet object
         self._validation_sheet = ipysheet.sheet(
@@ -616,9 +627,11 @@ class ValidationDashboard(ipyleaflet.Map):
 
         # Extract output filename if None available and doing offline points
         if self.output_filename is None:
+            # self.output_filename = os.path.join(
+            #    self.output_dir, f"{Path(in_filename).stem}.gpkg")
             self.output_filename = os.path.join(
                 self.output_dir, f"{Path(in_filename).stem}.gpkg")
-
+            
         # Case #1: student is already working on the points
         if os.path.isfile(self.output_filename):
             validation_points = self.load_gpkg(self.output_filename)
@@ -634,6 +647,8 @@ class ValidationDashboard(ipyleaflet.Map):
             validation_points['burnt'] = 0
             validation_points['confidence'] = 1
             validation_points['verified'] = False  # 'false'
+            validation_points['date'] = None
+            validation_points['seconds_taken'] = None
 
         # Create ipysheet object
         self._validation_sheet = ipysheet.sheet(
@@ -715,6 +730,27 @@ class ValidationDashboard(ipyleaflet.Map):
         )
         point_id_widget._property_key = 'ID'
 
+
+        # print("PRE UPDATE MARKER", self._current_marker_id)
+        self._current_marker_id = property_items['ID']
+        # print("POST UPDATE MARKER", self._current_marker_id)
+
+        # (y, x) as (lat, lon)
+
+        point_coords_widget_y = widgets.Text(
+            value=str(property_items['y']),
+            description='Lat:',
+            disabled=True
+        )
+        point_coords_widget_y._property_key = 'y'
+
+        point_coords_widget_x = widgets.Text(
+            value=str(property_items['x']),
+            description='Lon:',
+            disabled=True
+        )
+        point_coords_widget_x._property_key = 'x'
+
         checked_widget = widgets.Checkbox(
             value=verified_option,
             description='Verified:',
@@ -722,8 +758,26 @@ class ValidationDashboard(ipyleaflet.Map):
         )
         checked_widget._property_key = 'verified'
 
+        def changed_checked_widget(b):
+
+            self._seconds_per_point = round(
+                    time.time() - self._current_time, 4)
+            self._feature['properties']['date'] = str(pd.Timestamp.now())
+            self._feature['properties']['seconds_taken'] = self._seconds_per_point
+            self._feature['properties']['verified'] = True
+
+            # updating the information with new data
+            self.geo_data_layer.geo_dataframe.loc[
+                self.geo_data_layer.geo_dataframe['ID']
+                == self._feature['properties']['ID'],
+                self._feature['properties'].keys()] = self._feature['properties'].values()
+
+        checked_widget.observe(changed_checked_widget)
+
         popup = [
             point_id_widget,
+            point_coords_widget_y,
+            point_coords_widget_x,
             radio_check_widget,
             radio_burn_widget,
             radio_confidence_widget,
@@ -733,12 +787,22 @@ class ValidationDashboard(ipyleaflet.Map):
         return popup
 
     def on_click_polygon_object(self, event, feature, **kwargs):
+        
+        # get current time
+        self._current_time = time.time()        
+        self._feature = feature
+
+        self._feature['properties'] = self.geo_data_layer.geo_dataframe.loc[
+                self.geo_data_layer.geo_dataframe['ID']
+                == self._feature['properties']['ID']].to_dict(orient='records')[0]
+        
         # Dynamically create input widgets for each property
-        property_widgets = self.create_property_widgets(feature['properties'])
+        self.property_widgets = self.create_property_widgets(
+            self._feature['properties'])
         save_button = widgets.Button(description="Save")
-        geom_type = feature['geometry']['type']
+        geom_type = self._feature['geometry']['type']
         centroid = self.calculate_centroid(
-            feature['geometry']['coordinates'], geom_type)
+            self._feature['geometry']['coordinates'], geom_type)
 
         box_layout = widgets.Layout(
             display='flex',
@@ -748,30 +812,31 @@ class ValidationDashboard(ipyleaflet.Map):
 
         # Create and open the popup
         popup_content = widgets.VBox(
-            property_widgets + [save_button], layout=box_layout)
+            self.property_widgets + [save_button], layout=box_layout)
 
-        popup = Popup(
+        self._popup = Popup(
             location=centroid,
             child=popup_content,
             close_button=True,
             auto_close=False,
-            close_on_escape_key=True,
-            min_width=320
+            close_on_escape_key=False,
+            min_width=320,
+            name='Observations'
         )
 
-        self.add_layer(popup)
+        self.add_layer(self._popup)
 
         def save_changes(_):
 
             original_data = copy.deepcopy(self.geo_data_layer.data)
-            original_feature = copy.deepcopy(feature)
+            original_feature = copy.deepcopy(self._feature)
             # Update the properties with the new values
-            for widget in property_widgets:
-                feature['properties'][widget._property_key] = widget.value
+            for widget in self.property_widgets:
+                self._feature['properties'][widget._property_key] = widget.value
 
             for i, f in enumerate(original_data['features']):
                 if f == original_feature:
-                    original_data['features'][i] = feature
+                    original_data['features'][i] = self._feature
                     break
 
             # Update the GeoJSON layer to reflect the changes
@@ -781,20 +846,21 @@ class ValidationDashboard(ipyleaflet.Map):
             # updating the information with new data
             self.geo_data_layer.geo_dataframe.loc[
                 self.geo_data_layer.geo_dataframe['ID']
-                == feature['properties']['ID'],
-                feature['properties'].keys()] = feature['properties'].values()
+                == self._feature['properties']['ID'],
+                self._feature['properties'].keys()] = self._feature['properties'].values()
 
             # saving output
             self.geo_data_layer.geo_dataframe.to_file(
                 self.output_filename, layer='validation', driver="GPKG")
 
             # Close the popup by removing it from the map
-            self.remove_layer(popup)
+            self.remove_layer(self._popup)
 
             self.center = tuple(
                 list(self._markers_dict)[self._marker_counter])
             self.zoom = self.default_zoom
 
+        # verified_widget.observe(save_changes)
         save_button.on_click(save_changes)
 
     def save_gpkg(self, df, output_filename, layer="validation"):
@@ -822,13 +888,20 @@ class ValidationDashboard(ipyleaflet.Map):
         if 'verified' not in gdf.columns:
             gdf['verified'] = False
 
-        # get the points that have been verified if any
-        self._marker_counter = gdf[
-            'verified'][gdf['verified']].last_valid_index()
+        if self.filter_points_by is not None:
+            verified_list = gdf[gdf['Group'] == self.filter_points_by][
+                'verified'].tolist()
+        else:
+            verified_list = gdf['verified'].tolist()
+            
+        self._marker_counter = [
+            i for i, x in enumerate(verified_list) if not x][0] - 1
 
         if self._marker_counter is None:
             self._marker_counter = -1
 
+        print("MARKER COUNTER", self._marker_counter)
+            
         return gdf
 
     def _main_toolbar(self):
