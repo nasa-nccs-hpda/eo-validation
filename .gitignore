@@ -5,6 +5,7 @@ __pycache__/
 *.tif
 *.xml
 *.gpkg
+*.csv
 
 # C extensions
 *.so
