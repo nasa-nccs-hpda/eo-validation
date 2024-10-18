@@ -848,7 +848,7 @@ class ValidationDashboard(ipyleaflet.Map):
                 self.geo_data_layer.geo_dataframe['ID']
                 == self._feature['properties']['ID'],
                 self._feature['properties'].keys()] = \
-                    self._feature['properties'].values()
+                self._feature['properties'].values()
 
             # saving output
             self.geo_data_layer.geo_dataframe.to_file(
