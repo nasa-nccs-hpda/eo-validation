@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 *.tif
 *.xml
+*.gpkg
 
 # C extensions
 *.so

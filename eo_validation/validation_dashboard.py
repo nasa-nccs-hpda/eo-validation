@@ -266,7 +266,7 @@ class ValidationDashboard(ipyleaflet.Map):
         self._current_marker_id = None
         self._current_time = None
         self._seconds_per_point = None
-        
+
         self.async_writer = AsyncWriteGDF()
 
         # Adding default Google Basemap
@@ -631,7 +631,7 @@ class ValidationDashboard(ipyleaflet.Map):
             #    self.output_dir, f"{Path(in_filename).stem}.gpkg")
             self.output_filename = os.path.join(
                 self.output_dir, f"{Path(in_filename).stem}.gpkg")
-            
+
         # Case #1: student is already working on the points
         if os.path.isfile(self.output_filename):
             validation_points = self.load_gpkg(self.output_filename)
@@ -730,13 +730,9 @@ class ValidationDashboard(ipyleaflet.Map):
         )
         point_id_widget._property_key = 'ID'
 
-
-        # print("PRE UPDATE MARKER", self._current_marker_id)
         self._current_marker_id = property_items['ID']
-        # print("POST UPDATE MARKER", self._current_marker_id)
 
         # (y, x) as (lat, lon)
-
         point_coords_widget_y = widgets.Text(
             value=str(property_items['y']),
             description='Lat:',
@@ -763,14 +759,16 @@ class ValidationDashboard(ipyleaflet.Map):
             self._seconds_per_point = round(
                     time.time() - self._current_time, 4)
             self._feature['properties']['date'] = str(pd.Timestamp.now())
-            self._feature['properties']['seconds_taken'] = self._seconds_per_point
+            self._feature['properties']['seconds_taken'] = \
+                self._seconds_per_point
             self._feature['properties']['verified'] = True
 
             # updating the information with new data
             self.geo_data_layer.geo_dataframe.loc[
                 self.geo_data_layer.geo_dataframe['ID']
                 == self._feature['properties']['ID'],
-                self._feature['properties'].keys()] = self._feature['properties'].values()
+                self._feature['properties'].keys()] = \
+                self._feature['properties'].values()
 
         checked_widget.observe(changed_checked_widget)
 
@@ -789,13 +787,14 @@ class ValidationDashboard(ipyleaflet.Map):
     def on_click_polygon_object(self, event, feature, **kwargs):
         
         # get current time
-        self._current_time = time.time()        
+        self._current_time = time.time() 
         self._feature = feature
 
         self._feature['properties'] = self.geo_data_layer.geo_dataframe.loc[
                 self.geo_data_layer.geo_dataframe['ID']
-                == self._feature['properties']['ID']].to_dict(orient='records')[0]
-        
+                == self._feature['properties']['ID']
+        ].to_dict(orient='records')[0]
+
         # Dynamically create input widgets for each property
         self.property_widgets = self.create_property_widgets(
             self._feature['properties'])
@@ -893,15 +892,13 @@ class ValidationDashboard(ipyleaflet.Map):
                 'verified'].tolist()
         else:
             verified_list = gdf['verified'].tolist()
-            
+
         self._marker_counter = [
             i for i, x in enumerate(verified_list) if not x][0] - 1
 
         if self._marker_counter is None:
             self._marker_counter = -1
 
-        print("MARKER COUNTER", self._marker_counter)
-            
         return gdf
 
     def _main_toolbar(self):

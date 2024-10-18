@@ -2,7 +2,7 @@ import threading
 
 
 # Inheriting the base class 'Thread'
-class AsyncWriteGDF(threading.Thread): 
+class AsyncWriteGDF(threading.Thread):
 
     def __init__(self):
 
