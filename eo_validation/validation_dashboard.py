@@ -756,12 +756,21 @@ class ValidationDashboard(ipyleaflet.Map):
 
         def changed_checked_widget(b):
 
+            # compute seconds per point taken
             self._seconds_per_point = round(
                     time.time() - self._current_time, 4)
+
+            # update date of validated point
             self._feature['properties']['date'] = str(pd.Timestamp.now())
+
+            # update seconds per point taken
             self._feature['properties']['seconds_taken'] = \
                 self._seconds_per_point
-            self._feature['properties']['verified'] = True
+
+            # Update the properties with the new values
+            for widget in self.property_widgets:
+                self._feature['properties'][widget._property_key] = \
+                    widget.value
 
             # updating the information with new data
             self.geo_data_layer.geo_dataframe.loc[
@@ -798,6 +807,7 @@ class ValidationDashboard(ipyleaflet.Map):
         # Dynamically create input widgets for each property
         self.property_widgets = self.create_property_widgets(
             self._feature['properties'])
+
         save_button = widgets.Button(description="Save")
         geom_type = self._feature['geometry']['type']
         centroid = self.calculate_centroid(
@@ -829,6 +839,7 @@ class ValidationDashboard(ipyleaflet.Map):
 
             original_data = copy.deepcopy(self.geo_data_layer.data)
             original_feature = copy.deepcopy(self._feature)
+
             # Update the properties with the new values
             for widget in self.property_widgets:
                 self._feature['properties'][widget._property_key] = \
